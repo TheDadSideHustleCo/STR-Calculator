@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="STR Calculator">
+<meta name="theme-color" content="#0D1117">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>STR Profitability Calculator — The Dad Side Hustle Co</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0D1117;--bg2:#161B22;--bg3:#1C2128;--bg4:#21262D;
+  --border:rgba(243,156,18,.15);--border2:rgba(243,156,18,.30);
+  --gold:#F39C12;--gold2:#E67E22;--gdim:rgba(243,156,18,.08);
+  --text:#E6EDF3;--t2:#8B949E;--t3:#8793A0;
+  --green:#3FB950;--red:#F85149;--blue:#58A6FF;
+  --r:10px;
+}
+html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* LAYOUT */
+.app{display:flex;flex-direction:column;min-height:100vh;}
+
+/* HEADER */
+.hdr{background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:0 28px;display:flex;align-items:center;gap:16px;height:68px;
+  position:sticky;top:0;z-index:200;flex-shrink:0;}
+.hdr-logo{width:42px;height:42px;border-radius:50%;border:2px solid var(--gold);
+  background:linear-gradient(135deg,#1A1A2E,#0F1629);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:900;color:var(--gold);letter-spacing:.5px;flex-shrink:0;}
+.hdr-t{flex:1;}
+.hdr-title{font-size:17px;font-weight:800;letter-spacing:-.3px;}
+.hdr-sub{font-size:11px;color:var(--t2);letter-spacing:2.5px;text-transform:uppercase;}
+.hdr-acts{display:flex;gap:9px;margin-left:auto;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;
+  border-radius:7px;border:none;cursor:pointer;font:600 13px/1 'Inter',sans-serif;
+  transition:all .15s;white-space:nowrap;}
+.btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--border2);}
+.btn-ghost:hover{background:var(--gdim);color:var(--gold);border-color:var(--gold);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1A1A2E;font-weight:700;}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(243,156,18,.35);}
+.btn-sm{padding:7px 14px;font-size:12px;}
+.btn-outline-gold{background:transparent;color:var(--gold);border:1.5px solid var(--gold);}
+.btn-outline-gold:hover{background:var(--gdim);}
+
+/* TABS */
+.tab-nav{background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:0 28px;display:flex;gap:0;flex-shrink:0;}
+.t-btn{padding:15px 20px;cursor:pointer;font-size:13px;font-weight:600;
+  color:var(--t2);border:none;background:none;border-bottom:3px solid transparent;
+  margin-bottom:-1px;transition:all .15s;display:flex;align-items:center;gap:8px;
+  font-family:'Inter',sans-serif;}
+.t-btn:hover{color:var(--text);}
+.t-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+.t-step{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.t-btn.active .t-step,.t-btn.done .t-step{background:var(--gold);border-color:var(--gold);color:#1A1A2E;}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:28px;max-width:1180px;margin:0 auto;width:100%;}
+.panel{display:none;animation:fadein .2s ease;}
+.panel.active{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION HEADERS */
+.sec-hdr{margin-bottom:20px;}
+.sec-title{font-size:22px;font-weight:800;letter-spacing:-.3px;}
+.sec-desc{font-size:14px;color:var(--t2);margin-top:4px;}
+.divider{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:2px;
+  text-transform:uppercase;margin:24px 0 14px;
+  display:flex;align-items:center;gap:12px;}
+.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* FORMS */
+.fg{display:flex;flex-direction:column;gap:6px;}
+.lbl{font-size:13px;font-weight:600;color:var(--t2);letter-spacing:.4px;text-transform:uppercase;
+  display:flex;align-items:center;gap:6px;}
+.hint{font-size:12px;color:var(--t2);margin-top:2px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.s2{grid-column:span 2;}
+.s3{grid-column:span 3;}
+
+/* .iw: flexbox — $ stays in flow, never overlaps first digit */
+.iw{display:flex;align-items:stretch;background:var(--bg3);
+  border:1px solid var(--border);border-radius:7px;
+  transition:border-color .15s,box-shadow .15s;}
+.iw:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(243,156,18,.1);}
+.iw .pfx,.iw .sfx{display:flex;align-items:center;flex-shrink:0;
+  color:var(--t2);font-size:14px;pointer-events:none;user-select:none;}
+.iw .pfx{padding:0 5px 0 13px;}
+.iw .sfx{padding:0 13px 0 5px;}
+.iw input,.iw select{flex:1;min-width:0;
+  background:transparent!important;border:none!important;
+  border-radius:0!important;outline:none!important;
+  padding:11px 13px 11px 4px;}
+.iw input:focus,.iw select:focus{box-shadow:none!important;}
+.iw.has-sfx input{padding-right:4px;}
+/* Hide number spinner arrows — keeps values crisp */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+input[type=number]{-moz-appearance:textfield;}
+input[type=text],input[type=number],select{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  border-radius:7px;padding:11px 13px;color:var(--text);
+  font-size:14px;font-family:'Inter',sans-serif;
+  transition:border-color .15s,box-shadow .15s;outline:none;}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(243,156,18,.1);}
+input.warn{border-color:var(--red)!important;}
+select option{background:var(--bg3);}
+input[type=range]{width:100%;accent-color:var(--gold);cursor:pointer;}
+
+/* TOOLTIP */
+.tip{position:relative;display:inline-flex;}
+.tip-icon{width:17px;height:17px;border-radius:50%;border:1.5px solid var(--t2);
+  color:var(--t2);font-size:10px;font-weight:700;display:inline-flex;
+  align-items:center;justify-content:center;cursor:default;flex-shrink:0;
+  transition:all .15s;}
+.tip-icon:hover{border-color:var(--gold);color:var(--gold);}
+.tip-box{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;
+  transform:translateX(-50%);background:var(--bg4);border:1px solid var(--border2);
+  border-radius:8px;padding:10px 14px;width:240px;font-size:13px;color:var(--text);
+  line-height:1.5;z-index:300;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;}
+.tip:hover .tip-box{display:block;}
+
+/* EXPENSE ROWS */
+.exp-list{display:flex;flex-direction:column;gap:8px;}
+.exp-row{display:grid;grid-template-columns:1fr 140px 48px;gap:10px;align-items:center;
+  padding:12px 15px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;transition:border-color .15s;}
+.exp-row:hover{border-color:var(--border2);}
+.exp-name{font-size:14px;color:var(--text);font-weight:500;}
+.exp-sub{font-size:12px;color:var(--t2);margin-top:1px;}
+.exp-iw{display:flex;align-items:stretch;background:var(--bg);
+  border:1px solid var(--border);border-radius:6px;
+  transition:border-color .15s;}
+.exp-iw:focus-within{border-color:var(--gold);}
+.exp-iw .pfx{display:flex;align-items:center;flex-shrink:0;
+  padding:0 4px 0 10px;color:var(--t2);font-size:13px;pointer-events:none;}
+.exp-inp{flex:1;min-width:0;background:transparent!important;
+  border:none!important;border-radius:0!important;outline:none!important;
+  padding:8px 10px 8px 3px;color:var(--text);
+  font-size:14px;font-family:'Inter',sans-serif;}
+.exp-inp:focus{border:none!important;box-shadow:none!important;}
+.exp-unit{font-size:12px;color:var(--t3);text-align:right;font-weight:500;}
+
+/* MORTGAGE CALC BOX */
+.mort-box{background:rgba(243,156,18,.05);border:1px solid rgba(243,156,18,.25);
+  border-radius:10px;padding:20px;margin-bottom:20px;}
+.mort-result{display:flex;align-items:center;gap:20px;margin-top:16px;
+  padding:14px 18px;background:var(--bg);border-radius:8px;border:1px solid var(--border);}
+.mort-val{font-size:28px;font-weight:800;color:var(--gold);}
+.mort-breakdown{font-size:12px;color:var(--t2);line-height:1.6;}
+
+/* SEASON GRID */
+.season-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.s-month{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.s-month-nm{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;
+  letter-spacing:1px;margin-bottom:10px;}
+.s-occ-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;}
+.s-occ-val{color:var(--gold);font-weight:700;}
+.s-rate-row{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.s-rate-row label{font-size:12px;color:var(--t2);white-space:nowrap;}
+.s-rate-inp{width:72px;padding:5px 8px;font-size:13px;}
+.s-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-left:auto;}
+
+/* METRICS BAR */
+.mbar{background:var(--bg2);border-top:1px solid var(--border);
+  padding:0 28px;height:70px;flex-shrink:0;display:flex;align-items:center;
+  position:sticky;bottom:0;z-index:200;}
+.mbar-item{flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:0 12px;border-right:1px solid var(--border);}
+.mbar-item:last-child{border:none;}
+.mbar-lbl{font-size:11px;color:var(--t2);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;}
+.mbar-val{font-size:19px;font-weight:800;color:var(--gold);margin-top:2px;font-variant-numeric:tabular-nums;}
+.mbar-val.neg{color:var(--red);}
+.mbar-val.neu{color:var(--text);}
+
+/* METRIC CARDS */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:18px 20px;position:relative;overflow:visible;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--r) var(--r) 0 0;
+  background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.card.g::before{background:linear-gradient(90deg,var(--green),#2EA043);}
+.card.b::before{background:linear-gradient(90deg,var(--blue),#388BFD);}
+.card.r::before{background:linear-gradient(90deg,var(--red),#DA3633);}
+.card.p::before{background:linear-gradient(90deg,#A371F7,#8957E5);}
+.c-lbl{font-size:12px;font-weight:600;color:var(--t2);letter-spacing:.8px;
+  text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.c-val{font-size:28px;font-weight:800;margin:8px 0 3px;font-variant-numeric:tabular-nums;}
+.c-val.gold{color:var(--gold);}
+.c-val.green{color:var(--green);}
+.c-val.red{color:var(--red);}
+.c-val.blue{color:var(--blue);}
+.c-val.purple{color:#A371F7;}
+.c-sub{font-size:13px;color:var(--t2);}
+
+/* VERDICT */
+.verdict-box{padding:18px 22px;border-radius:10px;margin-bottom:22px;
+  display:flex;align-items:center;gap:18px;}
+.verdict-box.A{background:rgba(63,185,80,.08);border:1.5px solid rgba(63,185,80,.35);}
+.verdict-box.B{background:rgba(88,166,255,.08);border:1.5px solid rgba(88,166,255,.35);}
+.verdict-box.C{background:rgba(243,156,18,.08);border:1.5px solid rgba(243,156,18,.35);}
+.verdict-box.D{background:rgba(248,81,73,.08);border:1.5px solid rgba(248,81,73,.35);}
+.v-grade{font-size:48px;font-weight:900;width:64px;text-align:center;flex-shrink:0;}
+.v-grade.A{color:var(--green);}
+.v-grade.B{color:var(--blue);}
+.v-grade.C{color:var(--gold);}
+.v-grade.D{color:var(--red);}
+.v-title{font-size:17px;font-weight:700;}
+.v-desc{font-size:14px;color:var(--t2);margin-top:4px;line-height:1.6;}
+
+/* CHARTS */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;}
+.chart-card{background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;}
+.chart-card.full{grid-column:1/-1;}
+.ct{font-size:15px;font-weight:700;margin-bottom:3px;}
+.cs{font-size:13px;color:var(--t2);margin-bottom:16px;}
+.cw{position:relative;}
+canvas{display:block;width:100%;}
+
+/* DATA TABLE */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:14px;}
+th{padding:10px 13px;text-align:left;font-size:12px;font-weight:700;color:var(--t2);
+  letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--border);
+  background:var(--bg3);white-space:nowrap;}
+th:last-child{text-align:right;}
+td{padding:10px 13px;border-bottom:1px solid rgba(243,156,18,.06);color:var(--text);}
+td:last-child{text-align:right;}
+tr:hover td{background:var(--gdim);}
+.pos{color:var(--green);font-weight:600;}
+.neg{color:var(--red);font-weight:600;}
+.tot td{border-top:1px solid var(--border2);font-weight:700;background:var(--bg3);}
+
+/* COMPARISON */
+.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.cmp-side{padding:18px;border-radius:9px;}
+.cmp-side.str{background:rgba(243,156,18,.05);border:1px solid rgba(243,156,18,.2);}
+.cmp-side.ltr{background:rgba(88,166,255,.05);border:1px solid rgba(88,166,255,.2);}
+.cmp-title{font-size:16px;font-weight:700;margin-bottom:14px;}
+.cmp-title.str{color:var(--gold);}
+.cmp-title.ltr{color:var(--blue);}
+.cmp-row{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 0;border-bottom:1px solid var(--border);}
+.cmp-row:last-child{border:none;}
+.ck{font-size:13px;color:var(--t2);}
+.cv{font-size:14px;font-weight:600;}
+
+/* SCENARIO TAB */
+.scn-header{display:flex;gap:14px;margin-bottom:22px;}
+.scn-side{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+.scn-label{font-size:13px;font-weight:700;color:var(--t2);text-transform:uppercase;
+  letter-spacing:1px;margin-bottom:12px;}
+.scn-name{display:flex;gap:10px;align-items:center;margin-bottom:12px;}
+.scn-name input{flex:1;padding:9px 12px;font-size:14px;}
+.scn-stat{display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;border-bottom:1px solid var(--border);}
+.scn-stat:last-child{border:none;}
+.sk{font-size:13px;color:var(--t2);}
+.sv{font-size:14px;font-weight:700;}
+.scn-empty{text-align:center;padding:40px 20px;color:var(--t2);font-size:14px;}
+
+/* INSIGHT */
+.insight{background:rgba(243,156,18,.05);border:1px solid rgba(243,156,18,.2);
+  border-radius:8px;padding:15px 18px;font-size:14px;line-height:1.7;margin-top:14px;}
+
+/* DEPRECIATION CALLOUT */
+.dep-box{background:rgba(163,113,247,.07);border:1px solid rgba(163,113,247,.3);
+  border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:16px;margin-top:12px;}
+.dep-val{font-size:26px;font-weight:800;color:#A371F7;}
+.dep-txt{font-size:13px;color:var(--t2);line-height:1.6;}
+@media(max-width:600px){#taxSection th,#taxSection td{padding:8px 7px;font-size:12px;}#taxSection th:last-child,#taxSection td:last-child{text-align:left!important;min-width:0;}#taxSection th{letter-spacing:0;white-space:normal;}}
+.tax-switch{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2);white-space:nowrap;}
+.tax-switch select{padding:6px 28px 6px 10px;font-size:13px;}
+body[data-region="CA"] .us-only,body[data-region="US"] .ca-only{display:none!important;}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;
+  font-size:12px;font-weight:600;}
+.badge-gold{background:rgba(243,156,18,.12);color:var(--gold);}
+.badge-green{background:rgba(63,185,80,.12);color:var(--green);}
+.badge-red{background:rgba(248,81,73,.12);color:var(--red);}
+.badge-blue{background:rgba(88,166,255,.12);color:var(--blue);}
+
+/* UTILS */
+.mt8{margin-top:8px;}.mt16{margin-top:16px;}.mt24{margin-top:24px;}
+.flex{display:flex;}.gap8{gap:8px;}.gap14{gap:14px;}
+.jb{justify-content:space-between;}.ac{align-items:center;}
+.muted{color:var(--t2);}
+.bold{font-weight:700;}
+.warn-msg{font-size:12px;color:var(--red);margin-top:3px;display:none;}
+.warn-msg.show{display:block;}
+
+/* TOAST */
+/* AUTOSAVE INDICATOR */
+.autosave-ind{font-size:11px;color:var(--t2);display:flex;align-items:center;gap:4px;
+  opacity:0;margin-right:6px;white-space:nowrap;}
+.autosave-ind.show{opacity:1;}
+.autosave-ind::before{content:'●';color:var(--green);font-size:9px;}
+/* FIELD WARNINGS */
+.iw.warn{border-color:rgba(248,81,73,.5)!important;}
+.iw.warn:focus-within{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(248,81,73,.1)!important;}
+.field-warn{font-size:11px;color:var(--red);margin-top:3px;display:none;}
+.field-warn.show{display:block;}
+/* RANGE SLIDER FOCUS */
+input[type=range]:focus{outline:2px solid var(--gold);outline-offset:2px;}
+.toast{position:fixed;bottom:84px;right:22px;background:var(--green);color:#fff;
+  padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);z-index:999;
+  animation:toastAnim 2.5s forwards;}
+@keyframes toastAnim{0%{opacity:0;transform:translateY(8px)}8%{opacity:1;transform:translateY(0)}85%{opacity:1}100%{opacity:0}}
+
+/* PRINT */
+#printSummary{display:none;}
+@media print{
+  /* ─ Hide all screen-only chrome ─ */
+  .hdr .hdr-acts,.tab-nav,.mbar,.no-print,.btn,
+  .tip-icon,.tip-box,.hint{display:none!important;}
+
+  /* ─ Show all tab panels as sequential sections ─ */
+  .panel{display:block!important;opacity:1!important;animation:none!important;}
+
+  /* ─ Page & body ─ */
+  @page{margin:.55in .6in;size:letter landscape;@bottom-left{content:'The Dad Side Hustle Co · Estimates only — not financial, tax or investment advice';font:9px Arial,sans-serif;color:#666;}@bottom-right{content:'Page ' counter(page) ' of ' counter(pages);font:9px Arial,sans-serif;color:#666;}}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  html,body{background:#fff!important;color:#111!important;
+    font-size:11.5px!important;font-family:Arial,sans-serif!important;}
+  .app{display:block!important;height:auto!important;}
+  .main{padding:8px!important;max-width:100%!important;overflow:visible!important;}
+
+  /* ─ Header: static, compact, dark text ─ */
+  .hdr{position:static!important;background:#fff!important;height:auto!important;
+    padding:6px 0 10px!important;border-bottom:2px solid #222!important;
+    margin-bottom:12px!important;}
+  .hdr-logo-text{color:#111!important;}
+  .hdr-sub,.hdr-prop{color:#555!important;}
+  .logo-ring{border-color:#333!important;}
+
+  /* ─ Section page breaks ─ */
+  #panel-property,#panel-revenue,#panel-expenses{display:none!important;}
+  #printSummary{display:block!important;break-before:page;}
+  #panel-scenario{break-before:page;padding-top:6px!important;}
+  body[data-scn="0"] #panel-scenario{display:none!important;}
+  /* ─ Within Results: charts on their own page, data tables on next ─ */
+  #chartsRow1{break-before:page;}
+  #monthlySection{break-before:page;}
+  /* ─ Hide Help tab — covered by the separate PDF Quick Start Guide ─ */
+  #panel-help{display:none!important;}
+
+  /* ─ Dividers ─ */
+  .divider{background:transparent!important;color:#444!important;
+    border-top:1px solid #bbb!important;border-bottom:none!important;}
+
+  /* ─ Form groups & input wrappers ─ */
+  .fg{margin-bottom:10px!important;}
+  .lbl{color:#333!important;}
+  .iw,.exp-iw{background:#f0f0f0!important;border:1px solid #aaa!important;}
+  .iw input,.iw select,.exp-inp{color:#111!important;background:transparent!important;}
+  .iw .pfx,.iw .sfx,.exp-iw .pfx{color:#555!important;}
+  input[type=range]{display:none!important;}
+
+  /* ─ Grid layouts ─ */
+  .g2,.g3{grid-template-columns:repeat(3,1fr)!important;gap:8px!important;}
+  .cards{grid-template-columns:repeat(4,1fr)!important;gap:8px!important;}
+  .chart-grid{grid-template-columns:1fr 1fr!important;gap:10px!important;}
+  .chart-card.full{grid-column:1/-1!important;}
+  .cmp-grid{grid-template-columns:1fr 1fr!important;gap:10px!important;}
+
+  /* ─ Cards & containers ─ */
+  .card,.tbl-wrap,.verdict-box,.dep-box,.cmp-side,.scn-side{
+    background:#f8f8f8!important;border:1px solid #ccc!important;
+    break-inside:avoid!important;overflow:visible!important;}
+  /* ─ Chart cards stay dark so chart colors remain readable ─ */
+  .chart-card{background:#fff!important;border:1px solid #ccc!important;
+    break-inside:avoid!important;overflow:visible!important;}
+  /* Use higher-specificity selectors to beat the .c-lbl,.ct,.cs rule below */
+  .chart-card .ct{color:#111!important;}
+  .chart-card .cs{color:#555!important;}
+  /* Any inline-coloured text inside a dark chart-card (e.g. warning lines) */
+  .chart-card>div[style*="color:var"]{color:#555!important;}
+  .card::before{background:#888!important;}
+  .card.g::before{background:#2d8a47!important;}
+  .card.b::before{background:#1e6bb8!important;}
+  .card.r::before{background:#c0392b!important;}
+
+  /* ─ Card labels & values ─ */
+  .c-lbl,.ct,.cs,.cv,.ck,.c-sub{color:#444!important;}
+  .c-val{color:#111!important;font-size:22px!important;}
+  .c-val.gold{color:#8a5a00!important;}
+  .c-val.green,.pos{color:#145222!important;}
+  .c-val.red,.neg{color:#8b0c18!important;}
+
+  /* ─ Verdict box ─ */
+  .verdict-box.A{background:#e8f5e9!important;border-color:#4caf50!important;}
+  .verdict-box.B{background:#e3f2fd!important;border-color:#1e88e5!important;}
+  .verdict-box.C{background:#fff8e1!important;border-color:#f9a825!important;}
+  .verdict-box.D{background:#ffebee!important;border-color:#e53935!important;}
+  .v-grade.A{color:#2e7d32!important;}
+  .v-grade.B{color:#1565c0!important;}
+  .v-grade.C{color:#f57f17!important;}
+  .v-grade.D{color:#c62828!important;}
+  .v-title,.v-desc{color:#111!important;}
+
+  /* ─ Tables ─ */
+  .tbl-wrap{overflow:visible!important;}
+  table{border-collapse:collapse!important;width:100%!important;}
+  th{background:#e8e8e8!important;color:#111!important;
+    border:1px solid #bbb!important;padding:6px 8px!important;}
+  td{color:#111!important;border:1px solid #ddd!important;padding:5px 8px!important;}
+  tr:nth-child(even) td{background:#f5f5f5!important;}
+  /* ─ Total / summary rows in Monthly Breakdown & Tax tables ─ */
+  .tot td{background:#e8e8e8!important;color:#111!important;
+    font-weight:700!important;border-top:2px solid #bbb!important;}
+
+  /* ─ Expense rows ─ */
+  .exp-row{background:#f4f4f4!important;border:1px solid #ccc!important;}
+  .exp-lbl,.exp-name,.exp-sub,.exp-unit{color:#222!important;}
+
+  /* ─ Depreciation callout — inline light colours need overriding ─ */
+  .dep-val{color:#5a35a8!important;}
+  .dep-box strong,.dep-txt strong{color:#111!important;}
+  .dep-box span,.dep-txt span{color:#444!important;}
+
+  /* ─ Mortgage section ─ */
+  .e_mortgage,.mort-row{background:#f4f4f4!important;}
+  .mort-label,.mort-val{color:#111!important;}
+
+  /* ─ Comparison section ─ */
+  .cmp-title{color:#333!important;}
+  .cmp-title.str{color:#8a5a00!important;}
+  .cmp-val,.cmp-label{color:#111!important;}
+  .ck{color:#444!important;}
+  .cv{color:#111!important;}
+  .cmp-insight{background:#f0f4ff!important;border:1px solid #c0c8e0!important;
+    color:#111!important;}
+  /* ─ Insight inside dark chart-card (Results: STR vs LTR section) ─ */
+  .chart-card .insight{color:#222!important;
+    background:#fff4dc!important;
+    border-color:rgba(243,156,18,.6)!important;}
+  /* ─ Insight on white panel background (Scenario tab) ─ */
+  #panel-scenario .insight{color:#333!important;
+    background:rgba(243,156,18,.08)!important;
+    border-color:rgba(243,156,18,.35)!important;}
+  /* ─ Results footer: swap dark bg to light for print ─ */
+  #resultFooter{background:#f4f4f4!important;border:1px solid #ccc!important;
+    border-radius:6px!important;}
+  #resultFooter *{color:#333!important;}
+
+  /* ─ Scenario tab ─ */
+  .scn-side{background:#f8f8f8!important;border:1px solid #ccc!important;}
+  .scn-stat{border-bottom:1px solid #ddd!important;}
+  .scn-stat .sk{color:#444!important;}
+  .scn-stat .sv{color:#111!important;}
+  .scn-stat .sv.pos{color:#145222!important;}
+  .scn-stat .sv.neg{color:#8b0c18!important;}
+  .scn-bar-wrap{background:#e8e8e8!important;}
+  .scn-bar-fill{background:#c8a84b!important;}
+  .scn-empty{color:#666!important;}
+
+  /* ─ Summary bar ─ */
+  .mbar-label{color:#444!important;}
+  .mbar-val{color:#111!important;}
+
+  /* ─ Season / month cards ─ */
+  .season-grid{grid-template-columns:repeat(4,1fr)!important;gap:8px!important;}
+  .s-month{background:#f0f0f0!important;border:1px solid #ccc!important;break-inside:avoid!important;}
+  .s-month-nm{color:#111!important;}
+  .s-occ-row span.muted{color:#444!important;}
+  .s-occ-val{color:#8a5a00!important;}
+  .s-rate-row label{color:#333!important;}
+  .s-rate-inp{color:#111!important;background:#fff!important;border:1px solid #aaa!important;}
+  .s-dot{display:none!important;}
+
+  /* ─ Canvas: display as-is — chart-card dark bg keeps chart colors readable ─ */
+  canvas{display:block!important;width:100%!important;max-height:150px;}
+  #taxSection{break-before:page;}
+  #monthlySection{break-before:page;}
+  #resultFooter,.toast,.tax-switch{display:none!important;}
+  #taxSection td,#monthlySection td{padding:3px 8px!important;}
+  #panel-results .chart-card.full{margin-top:0!important;margin-bottom:8px!important;}
+  #panel-results .chart-grid canvas{max-height:132px!important;}
+  #panel-results .cards{gap:6px!important;margin-bottom:6px!important;}
+  #panel-results .card{padding:8px 12px!important;}
+  #panel-results .c-val{font-size:18px!important;margin:2px 0!important;}
+  #panel-results .verdict-box{padding:10px 14px!important;margin-bottom:8px!important;}
+  #panel-results .chart-card{padding:10px 12px!important;margin-bottom:8px!important;}
+  #panel-results .chart-grid{gap:8px!important;margin-bottom:8px!important;}
+  .hdr{margin-bottom:6px!important;padding:2px 0 6px!important;}
+  #printSummary h2{font-size:18px;margin:0 0 4px;color:#111;}
+  #printSummary .ps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px;}
+  #printSummary table{width:100%;font-size:11px;}
+  #printSummary th{text-align:left;}
+  #printSummary .ps-box{break-inside:avoid;}
+  #printSummary .ps-wide{break-inside:avoid;margin-top:12px;}
+  #printSummary .ps-wide td,#printSummary .ps-wide th{text-align:center;padding:3px 4px;}
+  #printSummary .ps-note{font-size:10px;color:#555;margin-top:10px;}
+}
+
+  /* ── Help Tab ──────────────────────────────────────────────── */
+  .help-section{margin-bottom:28px;}
+  .help-section h3{font-size:15px;font-weight:700;color:var(--gold);
+    margin:0 0 10px;display:flex;align-items:center;gap:8px;}
+  .help-section h3 .h-num{background:var(--gold);color:#000;border-radius:50%;
+    width:22px;height:22px;display:inline-flex;align-items:center;
+    justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+  .help-step{display:flex;gap:12px;align-items:flex-start;
+    background:var(--bg3);border-radius:8px;padding:12px 14px;
+    margin-bottom:8px;border-left:3px solid var(--gold);}
+  .help-step .step-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+  .help-step .step-body{flex:1;}
+  .help-step .step-title{font-weight:700;font-size:14px;margin-bottom:3px;}
+  .help-step .step-desc{font-size:13px;color:var(--t2);line-height:1.5;}
+  .help-metric{display:flex;gap:10px;align-items:flex-start;
+    padding:10px 0;border-bottom:1px solid var(--border);}
+  .help-metric:last-child{border-bottom:none;}
+  .help-metric .hm-label{font-weight:700;font-size:13px;min-width:170px;color:var(--t1);}
+  .help-metric .hm-desc{font-size:13px;color:var(--t2);line-height:1.5;}
+  .help-grade{display:inline-flex;align-items:center;gap:10px;
+    background:var(--bg3);border-radius:8px;padding:8px 14px;
+    margin-bottom:8px;width:100%;box-sizing:border-box;}
+  .help-grade .hg-letter{font-size:20px;font-weight:900;width:28px;text-align:center;}
+  .help-grade .hg-letter.A{color:#4ade80;}
+  .help-grade .hg-letter.B{color:#60a5fa;}
+  .help-grade .hg-letter.C{color:var(--gold);}
+  .help-grade .hg-letter.D{color:#f87171;}
+  .help-grade .hg-body{flex:1;}
+  .help-grade .hg-title{font-weight:700;font-size:13px;}
+  .help-grade .hg-desc{font-size:12px;color:var(--t2);margin-top:2px;}
+  .help-tip{background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.3);
+    border-radius:8px;padding:12px 14px;margin-bottom:8px;font-size:13px;
+    color:var(--t1);line-height:1.5;}
+  .help-tip strong{color:var(--gold);}
+  .help-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:640px){.help-cols{grid-template-columns:1fr;}}
+
+
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:600px){
+  html,body{overflow-x:hidden;max-width:100vw;}
+  .app{max-width:100vw;overflow-x:hidden;}
+  .tab-nav{padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100vw;}
+  .t-btn{padding:10px 8px;font-size:11px;gap:4px;white-space:nowrap;flex-shrink:0;}
+  .t-step{width:16px;height:16px;font-size:9px;}
+  .main{padding:14px;max-width:100vw;overflow-x:hidden;}
+  .hdr{padding:8px 14px;max-width:100vw;flex-wrap:wrap;height:auto;gap:8px;}
+  .hdr-acts{flex-wrap:wrap;gap:6px;}
+  .hdr-title{font-size:14px;}
+  .hdr-sub{display:none;}
+  .mbar{gap:6px;padding:8px 14px;flex-wrap:wrap;}
+  .mb-item{min-width:auto;}
+  .g2,.g3{grid-template-columns:1fr!important;}
+  .g4{grid-template-columns:1fr 1fr!important;}
+  .cards{grid-template-columns:1fr 1fr!important;}
+  .chart-grid{grid-template-columns:1fr!important;}
+  .cmp-grid{grid-template-columns:1fr!important;}
+  .panel{max-width:100%;overflow-x:hidden;}
+  .flex.gap8{flex-wrap:wrap;}
+  .season-grid{grid-template-columns:1fr 1fr!important;gap:8px!important;}
+  .s-month{padding:10px;min-width:0;}
+  .s-rate-inp{width:64px;min-width:0;flex-shrink:1;}
+}
+/* ── Web link note, update notice, Home Screen tip ── */
+#tdsh-link-note{background:#2A2110;border-bottom:1px solid var(--border2);color:var(--text);padding:12px 28px;font-size:15px;line-height:1.5;}
+#tdsh-link-note a{color:var(--gold);font-weight:700;word-break:break-all;}
+#tdsh-link-note .ln-pc{display:block;color:var(--t2);font-size:14px;margin-top:2px;}
+#tdsh-update{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.65);align-items:center;justify-content:center;padding:20px;}
+#tdsh-update.active{display:flex;}
+.tu-card{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;max-width:420px;width:100%;padding:26px 24px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5);}
+.tu-card h3{font-size:1.35rem;margin:6px 0 8px;color:var(--text);}
+.tu-card p{color:var(--t2);margin-bottom:10px;}
+.tu-keep{background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.35);border-radius:10px;padding:9px 12px;font-size:14px;margin:6px 0 16px;color:var(--text);}
+.tu-btns{display:flex;flex-direction:column;gap:10px;}
+.tu-btns button{font:700 15px 'Inter',system-ui,sans-serif;padding:12px 16px;border-radius:10px;cursor:pointer;border:none;}
+.tu-primary{background:var(--gold);color:#0D1117;}
+.tu-later{background:transparent;color:var(--text);border:1px solid var(--border2)!important;}
+#tdsh-hs-tip{display:none;position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top));z-index:10001;max-width:560px;margin:0 auto;background:var(--bg3);border:1px solid var(--border2);border-radius:14px;padding:14px 44px 14px 16px;box-shadow:0 12px 30px rgba(0,0,0,.45);color:var(--text);}
+#tdsh-hs-tip.visible{display:block;}
+#tdsh-hs-tip p{color:var(--t2);font-size:14px;margin-top:4px;}
+#tdsh-hs-tip button{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--t2);font-size:20px;cursor:pointer;padding:4px 8px;}
+@media print{#tdsh-link-note,#tdsh-update,#tdsh-hs-tip{display:none!important;}}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- Shown only when opened as a downloaded file; hidden automatically on the web link -->
+<div id="tdsh-link-note">
+  <strong>📲 On a phone or tablet?</strong> Open the calculator from your link instead:
+  <a href="https://thedadsidehustleco.github.io/STR-Calculator/">thedadsidehustleco.github.io/STR-Calculator</a>
+  <span class="ln-pc">On a computer you can keep using this file, or use the link to always have the latest version.</span>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-logo">TDSH</div>
+  <div class="hdr-t">
+    <div class="hdr-title">STR Profitability Calculator</div>
+    <div class="hdr-sub">The Dad Side Hustle Co · Short-Term Rental Analysis</div>
+  </div>
+  <div class="hdr-acts">
+    <span class="autosave-ind" id="autoSaveInd">Auto-saved</span>
+    <button class="btn btn-ghost btn-sm" onclick="resetAll()">↺ Reset</button>
+    <button class="btn btn-ghost btn-sm" onclick="saveToFile()">💾 Save</button>
+    <label class="btn btn-ghost btn-sm" style="cursor:pointer" title="Load a previously saved .json file">
+      📂 Load<input type="file" id="loadFileInput" accept=".json" style="display:none" onchange="loadFromFile(event)">
+    </label>
+    <button class="btn btn-gold btn-sm" onclick="showTab('results');setTimeout(()=>window.print(),500)">🖨 Export Report</button>
+  </div>
+</header>
+
+<!-- TAB NAV -->
+<nav class="tab-nav">
+  <button class="t-btn active" id="tb-property" onclick="showTab('property')"><span class="t-step">1</span>Property</button>
+  <button class="t-btn" id="tb-revenue" onclick="showTab('revenue')"><span class="t-step">2</span>Revenue & Rates</button>
+  <button class="t-btn" id="tb-expenses" onclick="showTab('expenses')"><span class="t-step">3</span>Mortgage & Expenses</button>
+  <button class="t-btn" id="tb-results" onclick="showTab('results')"><span class="t-step">4</span>Results & Analysis</button>
+  <button class="t-btn" id="tb-scenario" onclick="showTab('scenario')"><span class="t-step">5</span>Scenario Compare</button>
+    <button class="t-btn" id="tb-help" onclick="showTab('help')"><span class="t-step">?</span>How to Use</button>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- ══ TAB 1: PROPERTY ══════════════════════════════════ -->
+<div class="panel active" id="panel-property">
+  <div class="sec-hdr">
+    <div class="sec-title">Property Setup</div>
+    <div class="sec-desc">Your property details power the ROI, cap rate, depreciation, and payback calculations.</div>
+  </div>
+
+  <div class="divider">Basic Information</div>
+  <div class="g3">
+    <div class="fg"><label class="lbl" for="propName">Property Name</label>
+      <input type="text" id="propName" placeholder="e.g. Beachfront Bungalow" oninput="calc()"></div>
+    <div class="fg"><label class="lbl" for="propType">Property Type</label>
+      <select id="propType" onchange="calc()">
+        <option value="house">🏠 House / Single Family</option>
+        <option value="condo">🏢 Condo / Apartment</option>
+        <option value="cabin">🏕 Cabin / Cottage</option>
+        <option value="townhouse">🏘 Townhouse</option>
+        <option value="villa">🏖 Villa / Beach House</option>
+        <option value="unique">⭐ Unique / Other</option>
+      </select></div>
+    <div class="fg"><label class="lbl" for="propState">State / Province</label>
+      <input type="text" id="propState" placeholder="e.g. Florida" oninput="calc()"></div>
+    <div class="fg"><label class="lbl" for="propBeds">Bedrooms</label>
+      <select id="propBeds" onchange="calc()">
+        <option value="1">1 Bedroom</option><option value="2" selected>2 Bedrooms</option>
+        <option value="3">3 Bedrooms</option><option value="4">4 Bedrooms</option>
+        <option value="5">5 Bedrooms</option><option value="6">6+ Bedrooms</option>
+      </select></div>
+    <div class="fg"><label class="lbl" for="propBaths">Bathrooms</label>
+      <select id="propBaths" onchange="calc()">
+        <option value="1">1 Bath</option><option value="1.5">1.5 Baths</option>
+        <option value="2" selected>2 Baths</option><option value="2.5">2.5 Baths</option>
+        <option value="3">3 Baths</option><option value="4">4+ Baths</option>
+      </select></div>
+    <div class="fg"><label class="lbl" for="propGuests">Max Guests</label>
+      <select id="propGuests" onchange="calc()">
+        <option value="2">2 Guests</option><option value="4" selected>4 Guests</option>
+        <option value="6">6 Guests</option><option value="8">8 Guests</option>
+        <option value="10">10 Guests</option><option value="12">12+ Guests</option>
+      </select></div>
+  </div>
+
+  <div class="divider">Investment Details</div>
+  <div class="g3">
+    <div class="fg"><label class="lbl" for="purchasePrice">Purchase Price <span class="tip"><span class="tip-icon">?</span><span class="tip-box">The total price you paid or plan to pay for the property. Used to calculate cap rate, depreciation, and ROI.</span></span></label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="purchasePrice" value="325000" oninput="calcMortgage();calc()"></div>
+      <div class="field-warn" id="warn-purchasePrice"></div></div>
+    <div class="fg"><label class="lbl" for="downPct">Down Payment %</label>
+      <div class="iw has-sfx"><span class="sfx">%</span><input type="number" id="downPct" value="25" min="0" max="100" oninput="calcMortgage();calc()"></div>
+      <div class="hint" id="downAmt">= $70,000 cash invested</div></div>
+    <div class="fg"><label class="lbl" for="closingPct">Closing Costs % <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Typically 2–5% of purchase price. Added to your total cash invested for accurate cash-on-cash return.</span></span></label>
+      <div class="iw has-sfx"><span class="sfx">%</span><input type="number" id="closingPct" value="3" min="0" max="10" oninput="calc()"></div></div>
+    <div class="fg"><label class="lbl" for="buildingPct">Building Value % <span class="tip"><span class="tip-icon">?</span><span class="tip-box">The portion of the purchase price allocated to the building (not land). Typically 70–85%. IRS depreciates this over 27.5 years.</span></span></label>
+      <div class="iw has-sfx"><span class="sfx">%</span><input type="number" id="buildingPct" value="80" min="50" max="95" oninput="calc()"></div></div>
+    <div class="fg"><label class="lbl" for="appreciationPct">Annual Appreciation % <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Expected annual increase in property value. Used in the 5-year projection. US historical average is ~4%.</span></span></label>
+      <div class="iw has-sfx"><span class="sfx">%</span><input type="number" id="appreciationPct" value="4" min="0" max="15" oninput="calc()"></div></div>
+    <div class="fg"><label class="lbl" for="compRate">Comparable Market Rate <span class="tip"><span class="tip-icon">?</span><span class="tip-box">What similar properties earn per night in your market. Used in the investment verdict scoring.</span></span></label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="compRate" value="0" placeholder="Optional" oninput="calc()"></div></div>
+  </div>
+
+  <div class="divider">Long-Term Rental Comparison</div>
+  <div class="g2">
+    <div class="fg"><label class="lbl" for="ltrRent">Estimated Monthly LTR Rent</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="ltrRent" value="2200" oninput="calc()"></div>
+      <div class="hint">What you could charge as a traditional long-term rental</div></div>
+    <div class="fg"><label class="lbl" for="ltrExp">LTR Monthly Expenses</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="ltrExp" value="1600" oninput="calc()"></div>
+      <div class="hint">Mortgage + taxes + insurance only (no cleaning/management)</div></div>
+  </div>
+
+  <div class="mt24 flex gap8" style="justify-content:flex-end">
+    <button class="btn btn-gold" onclick="showTab('revenue')">Next: Revenue & Rates →</button>
+  </div>
+</div>
+
+<!-- ══ TAB 2: REVENUE ════════════════════════════════════ -->
+<div class="panel" id="panel-revenue">
+  <div class="sec-hdr">
+    <div class="sec-title">Revenue & Rates</div>
+    <div class="sec-desc">Set your pricing, platform, and fine-tune each month's seasonality.</div>
+  </div>
+
+  <div class="divider">Pricing</div>
+  <div class="g3">
+    <div class="fg"><label class="lbl" for="nightlyRate">Base Nightly Rate</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="nightlyRate" value="245" oninput="calc()"></div>
+      <div class="field-warn" id="warn-nightlyRate"></div></div>
+    <div class="fg"><label class="lbl" for="cleaningFee">Cleaning Fee (per booking)</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="cleaningFee" value="100" oninput="calc()"></div></div>
+    <div class="fg"><label class="lbl" for="avgStay">Avg. Guest Stay (nights) <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Average number of nights per booking. Affects how many cleanings and bookings occur each month.</span></span></label>
+      <input type="number" id="avgStay" value="3.5" step="0.5" min="1" max="30" oninput="calc()"></div>
+    <div class="fg"><label class="lbl" for="minStay">Minimum Stay (nights)</label>
+      <input type="number" id="minStay" value="2" min="1" max="14" oninput="calc()">
+      <div class="hint">Average stay is never counted as shorter than this</div></div>
+    <div class="fg"><label class="lbl" for="occupancy">Annual Occupancy Target</label>
+      <div class="iw has-sfx"><span class="sfx">%</span><input type="number" id="occupancy" value="66" min="0" max="100" oninput="updateSeasonDefaults();calc()"></div>
+      <div class="field-warn" id="warn-occupancy"></div></div>
+  </div>
+
+  <div class="divider">Platform & Fees</div>
+  <div class="g3">
+    <div class="fg"><label class="lbl" for="platform">Primary Platform</label>
+      <select id="platform" onchange="setPlatformFee();calc()">
+        <option value="airbnb">Airbnb (host-only fee ~15.5%)</option>
+        <option value="vrbo">VRBO (~8%: 5% commission + 3% payment)</option>
+        <option value="both">Both Platforms (~12% avg)</option>
+        <option value="direct">Direct Booking (~3% card fees)</option>
+        <option value="custom">Custom Rate</option>
+      </select></div>
+    <div class="fg"><label class="lbl" for="platformFee">Platform Host Fee % <span class="tip"><span class="tip-icon">?</span><span class="tip-box">The fee the platform deducts from your payout. Airbnb charges hosts outside the EEA a single host-only fee of about 15.5% of the booking subtotal (the standard since Sept 15, 2026). VRBO's pay-per-booking plan is about 8% (5% commission + 3% payment processing). Direct bookings still pay card-processing fees, about 3%. Check your own account for the exact rate.</span></span></label>
+      <div class="iw has-sfx"><span class="sfx">%</span><input type="number" id="platformFee" value="15.5" min="0" max="25" step="0.1" oninput="calc()"></div></div>
+    <div class="fg"><label class="lbl" for="compRate2">Comparable Market Rate</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="compRate2" value="0" placeholder="From Tab 1" oninput="if($('compRate'))$('compRate').value=this.value;calc()"></div>
+      <div class="hint">Auto-synced from Property tab</div></div>
+  </div>
+
+  <div class="divider">12-Month Seasonality</div>
+  <p class="muted" style="font-size:13px;margin-bottom:16px;">Each month inherits your annual occupancy target by default. Adjust individually for high/low seasons. Rate multiplier 1.0 = base rate, 1.3 = 30% premium.</p>
+  <div class="season-grid" id="seasonGrid"></div>
+
+  <div class="mt24 flex gap8 jb">
+    <button class="btn btn-ghost" onclick="showTab('property')">← Back</button>
+    <button class="btn btn-gold" onclick="showTab('expenses')">Next: Expenses →</button>
+  </div>
+</div>
+
+<!-- ══ TAB 3: EXPENSES ══════════════════════════════════ -->
+<div class="panel" id="panel-expenses">
+  <div class="sec-hdr">
+    <div class="sec-title">Mortgage & Expenses</div>
+    <div class="sec-desc">Enter your mortgage details and all operating costs. The mortgage payment is calculated automatically.</div>
+  </div>
+
+  <!-- MORTGAGE CALCULATOR -->
+  <div class="mort-box">
+    <div class="divider" style="margin-top:0">Mortgage Calculator</div>
+    <div class="g4">
+      <div class="fg"><label class="lbl" for="mortRate">Interest Rate</label>
+        <div class="iw has-sfx"><span class="sfx">%</span><input type="number" id="mortRate" value="6.75" step="0.05" min="1" max="20" oninput="calcMortgage()"></div></div>
+      <div class="fg"><label class="lbl" for="mortTerm">Loan Term</label>
+        <select id="mortTerm" onchange="calcMortgage()">
+          <option value="30" selected>30 Years</option>
+          <option value="25">25 Years</option>
+          <option value="20">20 Years</option>
+          <option value="15">15 Years</option>
+        </select></div>
+      <div class="fg"><label class="lbl" for="mortType">Loan Type</label>
+        <select id="mortType" onchange="calcMortgage()">
+          <option value="fixed">Fixed Rate</option>
+          <option value="arm51">ARM 5/1</option>
+          <option value="io">Interest-Only</option>
+        </select></div>
+      <div class="fg"><label class="lbl" for="mortAmount">Loan Amount</label>
+        <div class="iw"><span class="pfx">$</span><input type="number" id="mortAmount" value="243750" oninput="calcMortgage()"></div>
+        <div class="hint">Auto-calc from price & down payment</div></div>
+    </div>
+    <div class="mort-result">
+      <div>
+        <div class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">Monthly Payment (P&I)</div>
+        <div class="mort-val" id="mortPaymentDisplay">$1,864</div>
+      </div>
+      <div class="mort-breakdown" id="mortBreakdown">
+        Principal: $614 &nbsp;·&nbsp; Interest: $1,250<br>
+        Total paid over 30 yrs: $670,964 &nbsp;·&nbsp; Total interest: $390,964
+      </div>
+      <button class="btn btn-outline-gold btn-sm no-print" onclick="applyMortgage()" style="margin-left:auto;">Use This Amount →</button>
+    </div>
+  </div>
+
+  <div class="divider">Fixed Monthly Costs</div>
+  <div class="exp-list">
+    <div class="exp-row">
+      <div><div class="exp-name">Mortgage / Loan Payment</div><div class="exp-sub">From calculator above — or enter manually</div></div>
+      <div class="exp-iw"><span class="pfx">$</span><input class="exp-inp" type="number" id="e_mortgage" value="1581" oninput="calc()"></div>
+      <div class="exp-unit">/mo</div>
+    </div>
+    <div class="exp-row">
+      <div><div class="exp-name">Property Taxes</div><div class="exp-sub">Annual amount — auto-divided by 12</div></div>
+      <div class="exp-iw"><span class="pfx">$</span><input class="exp-inp" type="number" id="e_taxes" value="4800" oninput="calc()"></div>
+      <div class="exp-unit">/yr</div>
+    </div>
+    <div class="exp-row">
+      <div><div class="exp-name">STR Insurance</div><div class="exp-sub">Annual amount — auto-divided by 12</div></div>
+      <div class="exp-iw"><span class="pfx">$</span><input class="exp-inp" type="number" id="e_insurance" value="2400" oninput="calc()"></div>
+      <div class="exp-unit">/yr</div>
+    </div>
+    <div class="exp-row">
+      <div><div class="exp-name">HOA Fees</div><div class="exp-sub">Monthly — enter 0 if not applicable</div></div>
+      <div class="exp-iw"><span class="pfx">$</span><input class="exp-inp" type="number" id="e_hoa" value="0" oninput="calc()"></div>
+      <div class="exp-unit">/mo</div>
+    </div>
+    <div class="exp-row">
+      <div><div class="exp-name">STR License / Permit <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Many cities now require STR licenses. Annual cost — auto-divided by 12 in calculations.</span></span></div><div class="exp-sub">Annual — enter 0 if not required in your area</div></div>
+      <div class="exp-iw"><span class="pfx">$</span><input class="exp-inp" type="number" id="e_license" value="0" oninput="calc()"></div>
+      <div class="exp-unit">/yr</div>
+    </div>
+    <div class="exp-row">
+      <div><div class="exp-name">Property Management</div><div class="exp-sub">% of gross revenue — enter 0 if self-managed</div></div>
+      <div class="exp-iw"><span class="pfx" style="left:8px">%</span><input class="exp-inp" type="number" id="e_mgmt" value="0" min="0" max="40" step="0.5" oninput="calc()"></div>
+      <div class="exp-unit">%</div>
+    </div>
+  </div>
+
+  <div class="divider">Utilities</div>
+  <div class="g4">
+    <div class="fg"><label class="lbl" for="e_electric">Electricity</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_electric" value="140" oninput="calc()"></div>
+      <div class="hint">/mo</div></div>
+    <div class="fg"><label class="lbl" for="e_gas">Gas / Heating</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_gas" value="60" oninput="calc()"></div>
+      <div class="hint">/mo</div></div>
+    <div class="fg"><label class="lbl" for="e_water">Water / Sewer</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_water" value="55" oninput="calc()"></div>
+      <div class="hint">/mo</div></div>
+    <div class="fg"><label class="lbl" for="e_internet">Internet</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_internet" value="80" oninput="calc()"></div>
+      <div class="hint">/mo</div></div>
+  </div>
+
+  <div class="divider">Variable / Per-Booking Costs</div>
+  <div class="exp-list">
+    <div class="exp-row">
+      <div><div class="exp-name">Cleaning Cost per Turnover</div><div class="exp-sub">Auto-multiplied by avg bookings per month</div></div>
+      <div class="exp-iw"><span class="pfx">$</span><input class="exp-inp" type="number" id="e_cleaning" value="80" oninput="calc()"></div>
+      <div class="exp-unit">/turn</div>
+    </div>
+    <div class="exp-row">
+      <div><div class="exp-name">Toiletries & Welcome Basket</div><div class="exp-sub">Restocked each booking</div></div>
+      <div class="exp-iw"><span class="pfx">$</span><input class="exp-inp" type="number" id="e_supplies" value="25" oninput="calc()"></div>
+      <div class="exp-unit">/stay</div>
+    </div>
+    <div class="exp-row">
+      <div><div class="exp-name">Cleaning Supplies / Linens</div><div class="exp-sub">Monthly average for restocking</div></div>
+      <div class="exp-iw"><span class="pfx">$</span><input class="exp-inp" type="number" id="e_linen" value="40" oninput="calc()"></div>
+      <div class="exp-unit">/mo</div>
+    </div>
+  </div>
+
+  <div class="divider">Maintenance, CapEx & Other</div>
+  <div class="g3">
+    <div class="fg"><label class="lbl" for="e_repairs">Repairs & Maintenance</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_repairs" value="150" oninput="calc()"></div>
+      <div class="hint">Monthly average</div></div>
+    <div class="fg"><label class="lbl" for="e_capex">CapEx Reserve % <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Capital Expenditure reserve — set aside for major repairs (HVAC, roof, appliances). Industry standard is 5–10% of gross revenue. This protects you from large surprise expenses.</span></span></label>
+      <div class="iw has-sfx"><span class="sfx">%</span><input type="number" id="e_capex" value="5" min="0" max="20" oninput="calc()"></div>
+      <div class="hint">% of gross revenue reserved monthly</div></div>
+    <div class="fg"><label class="lbl" for="e_furniture">Furniture & Décor (Annual)</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_furniture" value="1200" oninput="calc()"></div>
+      <div class="hint">Annual replacement budget ÷ 12</div></div>
+    <div class="fg"><label class="lbl" for="e_landscape">Landscaping / Outdoor</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_landscape" value="0" oninput="calc()"></div>
+      <div class="hint">/mo</div></div>
+    <div class="fg"><label class="lbl" for="e_pool">Pool / Hot Tub</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_pool" value="0" oninput="calc()"></div>
+      <div class="hint">/mo</div></div>
+    <div class="fg"><label class="lbl" for="e_marketing">Advertising & Marketing</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_marketing" value="30" oninput="calc()"></div>
+      <div class="hint">/mo</div></div>
+    <div class="fg"><label class="lbl" for="e_cpa">Accounting / CPA Fees</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_cpa" value="600" oninput="calc()"></div>
+      <div class="hint">Annual — auto-divided by 12</div></div>
+    <div class="fg"><label class="lbl" for="e_other">Other Monthly</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_other" value="50" oninput="calc()"></div></div>
+  </div>
+
+  <div class="divider">Tax Depreciation / CCA</div>
+  <p class="muted" style="font-size:13px;margin-bottom:14px;"><span class="ca-only">In Canada the building cost is written off through capital cost allowance (CCA), claimed on Form T776. CCA can reduce your rental income to zero but cannot create or increase a rental loss. Land is not depreciable. Confirm the class, rate and first-year rules with your accountant.</span><span class="us-only">Depreciation is one of the most powerful STR tax advantages. The IRS lets you deduct the building value over time — even as the property appreciates. Rentals with an average guest stay of 30 days or less are generally treated as non-residential property (39 years); longer stays can use 27.5 years. Confirm which applies with your CPA.</span></p>
+  <div class="g3">
+    <div class="fg"><label class="lbl" for="e_taxRegion">Tax Format <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Chooses which tax-form references the Estimated Tax Deductions table uses: Canada (CRA Form T776, with capital cost allowance) or USA (IRS Schedule E, with depreciation).</span></span></label>
+      <select id="e_taxRegion" onchange="setTaxRegion(this.value)"><option value="CA">Canada (T776 / CCA)</option><option value="US">USA (Schedule E)</option></select></div>
+    <div class="fg ca-only"><label class="lbl" for="e_ccaRate">CCA Rate % <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Capital cost allowance on the building. Most rental buildings are Class 1 at 4% (declining balance). The land is not depreciable. First-year and special-rule details are not modeled here. Ask your accountant which class and rate apply.</span></span></label>
+      <div class="iw has-sfx"><span class="sfx">%</span><input type="number" id="e_ccaRate" value="4" min="0" max="20" step="0.5" oninput="calc()"></div>
+      <div class="hint">Class 1 building: 4%</div></div>
+    <div class="fg us-only"><label class="lbl" for="e_depYears">Building Depreciation Period <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Short-term rentals (average stay of 30 days or less) are generally depreciated over 39 years. Longer-stay rentals use 27.5 years. Ask your CPA which applies to you.</span></span></label>
+      <select id="e_depYears" onchange="calc()"><option value="39">39 years (average stay 30 days or less)</option><option value="27.5">27.5 years (longer stays)</option></select></div>
+    <div class="fg"><label class="lbl" for="e_buildingPct">Building Value % <span class="tip"><span class="tip-icon">?</span><span class="tip-box">From Property tab. Auto-synced.</span></span></label>
+      <div class="iw has-sfx"><span class="sfx">%</span><input type="number" id="e_buildingPct" value="80" min="50" max="95" oninput="calc()"></div>
+      <div class="hint">Auto-synced from Property tab</div></div>
+    <div class="fg us-only"><label class="lbl" for="e_bonusDepPct">Bonus Depreciation % <span class="tip"><span class="tip-icon">?</span><span class="tip-box">For short-life assets (furniture, appliances, flooring) that qualify for bonus depreciation. Property acquired and placed in service after January 19, 2025 qualifies for 100%; earlier property had lower rates. Confirm with your CPA.</span></span></label>
+      <div class="iw has-sfx"><span class="sfx">%</span><input type="number" id="e_bonusDepPct" value="100" min="0" max="100" oninput="calc()"></div></div>
+    <div class="fg us-only"><label class="lbl" for="e_shortLifeAssets">Short-Life Assets Value</label>
+      <div class="iw"><span class="pfx">$</span><input type="number" id="e_shortLifeAssets" value="15000" oninput="calc()"></div>
+      <div class="hint">Furniture, appliances, flooring, etc.</div></div>
+  </div>
+  <div class="dep-box mt16" id="depBox">
+    <div class="dep-val" id="depAnnual">$10,182</div>
+    <div class="dep-txt">
+      <strong style="color:var(--text)">Estimated Annual Depreciation Deduction</strong><br>
+      <span id="depBreakdown">Building depreciation: $5,436/yr (39 yr schedule) + Bonus depreciation: $9,000 (year 1 only)</span><br>
+      <span style="font-size:11px;color:var(--t3)">⚠ For informational purposes only. Consult a CPA — actual deductibility depends on your tax situation.</span>
+    </div>
+  </div>
+
+  <div class="mt24 flex gap8 jb">
+    <button class="btn btn-ghost" onclick="showTab('revenue')">← Back</button>
+    <button class="btn btn-gold" onclick="showTab('results')">View Results →</button>
+  </div>
+</div>
+
+<!-- ══ TAB 4: RESULTS ══════════════════════════════════ -->
+<div class="panel" id="panel-results">
+
+  <!-- Header row -->
+  <div class="flex ac jb" style="margin-bottom:20px;">
+    <div>
+      <div class="sec-title" id="r-propName">STR Analysis — Your Property</div>
+      <div class="sec-desc" id="r-propSub">Complete the form to see your full analysis</div>
+    </div>
+    <div class="flex gap8 ac no-print">
+      <button class="btn btn-ghost btn-sm" onclick="showTab('expenses')">← Edit Inputs</button>
+      <button class="btn btn-ghost btn-sm" onclick="saveScenario('A')">Save as Scenario A</button>
+      <button class="btn btn-ghost btn-sm" onclick="saveScenario('B')">Save as Scenario B</button>
+      <button class="btn btn-gold btn-sm" onclick="window.print()">🖨 Export</button>
+    </div>
+  </div>
+
+  <!-- VERDICT -->
+  <div class="verdict-box A" id="verdictBox">
+    <div class="v-grade A" id="verdictGrade">A</div>
+    <div>
+      <div class="v-title" id="verdictTitle">Strong Investment</div>
+      <div class="v-desc" id="verdictDesc">Your numbers look solid. This property meets key investment benchmarks.</div>
+    </div>
+  </div>
+
+  <!-- METRIC CARDS ROW 1 -->
+  <div class="cards">
+    <div class="card"><div class="c-lbl">Annual Gross Revenue <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Total income before platform fees and expenses. Includes room revenue + cleaning fees collected from guests.</span></span></div>
+      <div class="c-val gold" id="r_gross">$0</div><div class="c-sub">Before fees & expenses</div></div>
+    <div class="card g"><div class="c-lbl">Annual Net Profit <span class="tip"><span class="tip-icon">?</span><span class="tip-box">What you actually keep after all expenses and platform fees. This is your real bottom line.</span></span></div>
+      <div class="c-val green" id="r_net">$0</div><div class="c-sub" id="r_netMo">$0/month</div></div>
+    <div class="card b"><div class="c-lbl">Monthly Cash Flow <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Average monthly net profit. Positive = cash in your pocket each month. Negative = you're subsidizing the property.</span></span></div>
+      <div class="c-val blue" id="r_monthly">$0</div><div class="c-sub">Monthly average</div></div>
+    <div class="card"><div class="c-lbl">Profit Margin <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Net profit as a % of gross revenue. For every dollar earned, how many cents you keep. Many investors look for 25–30%+ (a rule of thumb, not a guarantee).</span></span></div>
+      <div class="c-val" id="r_margin">0%</div><div class="c-sub" id="r_occDisp">Avg occupancy: 0%</div></div>
+  </div>
+
+  <!-- METRIC CARDS ROW 2 -->
+  <div class="cards">
+    <div class="card"><div class="c-lbl">Cap Rate <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Net Operating Income ÷ Purchase Price. NOI is your income after every operating cost (cleaning and supplies included) but before the mortgage. Measures return independent of financing. 6–8%+ is considered strong for STR. Useful for comparing properties.</span></span></div>
+      <div class="c-val" id="r_caprate">0%</div><div class="c-sub">Net income ÷ purchase price</div></div>
+    <div class="card g"><div class="c-lbl">Cash-on-Cash Return <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Annual net profit ÷ total cash invested (down payment + closing costs). This is your actual return on the cash you put in. Many investors target 8–12%+ (a rule of thumb).</span></span></div>
+      <div class="c-val green" id="r_coc">0%</div><div class="c-sub" id="r_cashInvested">$0 cash invested</div></div>
+    <div class="card"><div class="c-lbl">ADR <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Average Daily Rate — your average room revenue per booked night, excluding cleaning fees. Key benchmarking metric used by all STR investors.</span></span></div>
+      <div class="c-val" id="r_adr">$0</div><div class="c-sub">Avg nightly room rate</div></div>
+    <div class="card"><div class="c-lbl">RevPAR <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Revenue Per Available Night — combines your rate AND your occupancy into one number. RevPAR = ADR × Occupancy %. A widely used STR performance metric.</span></span></div>
+      <div class="c-val" id="r_revpar">$0</div><div class="c-sub">Revenue per available night</div></div>
+  </div>
+
+  <!-- METRIC CARDS ROW 3 -->
+  <div class="cards">
+    <div class="card r"><div class="c-lbl">Annual Expenses <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Total of all operating expenses including mortgage, taxes, insurance, utilities, cleaning, CapEx reserve, and management fees.</span></span></div>
+      <div class="c-val red" id="r_exp">$0</div><div class="c-sub" id="r_expMo">$0/month</div></div>
+    <div class="card"><div class="c-lbl">Break-Even Occupancy <span class="tip"><span class="tip-icon">?</span><span class="tip-box">The minimum occupancy rate needed to cover all costs. If your actual occupancy is above this number, you're profitable. Lower is better.</span></span></div>
+      <div class="c-val" id="r_breakeven">0%</div><div class="c-sub">Min. to cover all costs</div></div>
+    <div class="card p"><div class="c-lbl">Payback Period <span class="tip"><span class="tip-icon">?</span><span class="tip-box">How many years until your cumulative net profit equals your total cash invested. Does not include property appreciation.</span></span></div>
+      <div class="c-val purple" id="r_payback">0 yrs</div><div class="c-sub" id="r_cashInvested2">On $0 invested</div></div>
+    <div class="card"><div class="c-lbl">Annual Depreciation <span class="tip"><span class="tip-icon">?</span><span class="tip-box">Estimated annual tax deduction from property depreciation (building only, over the period you choose). This non-cash deduction can significantly reduce your taxable income.</span></span></div>
+      <div class="c-val" id="r_dep">$0</div><div class="c-sub">Tax deduction (consult CPA)</div></div>
+  </div>
+
+  <!-- CHARTS ROW 1 -->
+  <div class="chart-grid" id="chartsRow1">
+    <div class="chart-card">
+      <div class="ct">Monthly Revenue vs. Expenses</div>
+      <div class="cs">Gross revenue and total expenses by month</div>
+      <div class="cw"><canvas id="barChart" height="230"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="ct">Annual Expense Breakdown</div>
+      <div class="cs">Where your money goes each year</div>
+      <div class="cw"><canvas id="donutChart" height="230"></canvas></div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 2 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="ct">Monthly Net Profit / Loss</div>
+      <div class="cs">Your take-home after all costs — green = profit, red = loss</div>
+      <div class="cw"><canvas id="profitChart" height="240"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="ct">Occupancy Sensitivity</div>
+      <div class="cs">How annual net profit changes across occupancy rates</div>
+      <div class="cw"><canvas id="sensitivityChart" height="240"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 5-YEAR PROJECTION -->
+  <div class="chart-card full mt16" style="margin-bottom:20px">
+    <div class="ct">5-Year Projection</div>
+    <div class="cs">Cumulative net profit + estimated property equity gain over 5 years</div>
+    <div class="cw"><canvas id="projectionChart" height="200"></canvas></div>
+  </div>
+
+  <!-- MONTHLY TABLE -->
+  <div class="chart-card" id="monthlySection" style="margin-bottom:20px">
+    <div class="ct" style="margin-bottom:4px">Full Monthly Breakdown</div>
+    <div class="cs">All 12 months — revenue, expenses, and net profit</div>
+    <div class="tbl-wrap">
+      <table><thead><tr>
+        <th>Month</th><th>Occ%</th><th>Nights</th><th>Gross Rev</th>
+        <th>Platform</th><th>Clean Rev</th><th>Total Exp</th><th>Net Profit</th>
+      </tr></thead>
+      <tbody id="monthTableBody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- STR vs LTR -->
+  <div class="chart-card" id="ltrSection" style="margin-bottom:14px">
+    <div class="ct" style="margin-bottom:4px">STR vs. Long-Term Rental Comparison</div>
+    <div class="cs" style="margin-bottom:18px">How short-term renting compares to traditional rental for this property</div>
+    <div class="cmp-grid">
+      <div class="cmp-side str">
+        <div class="cmp-title str">⭐ Short-Term Rental</div>
+        <div class="cmp-row"><span class="ck">Annual Revenue (net of fees)</span><span class="cv" id="cmp_strRev">$0</span></div>
+        <div class="cmp-row"><span class="ck">Annual Expenses</span><span class="cv" id="cmp_strExp">$0</span></div>
+        <div class="cmp-row"><span class="ck">Annual Net Profit</span><span class="cv" id="cmp_strNet">$0</span></div>
+        <div class="cmp-row"><span class="ck">Monthly Average</span><span class="cv" id="cmp_strMo">$0</span></div>
+        <div class="cmp-row"><span class="ck">Management Effort</span><span class="cv">High</span></div>
+        <div class="cmp-row" style="border:none"><span class="ck">Vacancy Risk</span><span class="cv">Variable</span></div>
+      </div>
+      <div class="cmp-side ltr">
+        <div class="cmp-title ltr">🏠 Long-Term Rental</div>
+        <div class="cmp-row"><span class="ck">Annual Revenue</span><span class="cv" id="cmp_ltrRev">$0</span></div>
+        <div class="cmp-row"><span class="ck">Annual Expenses</span><span class="cv" id="cmp_ltrExp">$0</span></div>
+        <div class="cmp-row"><span class="ck">Annual Net Profit</span><span class="cv" id="cmp_ltrNet">$0</span></div>
+        <div class="cmp-row"><span class="ck">Monthly Average</span><span class="cv" id="cmp_ltrMo">$0</span></div>
+        <div class="cmp-row"><span class="ck">Management Effort</span><span class="cv">Low</span></div>
+        <div class="cmp-row" style="border:none"><span class="ck">Vacancy Risk</span><span class="cv">Low</span></div>
+      </div>
+    </div>
+    <div class="insight" id="insightBox">Complete the form above to see your personalised insight.</div>
+  </div>
+
+  <!-- TAX SUMMARY -->
+  <div class="chart-card" id="taxSection" style="margin-top:0">
+    <div class="flex ac jb gap8" style="flex-wrap:wrap;margin-bottom:4px"><div class="ct" style="margin-bottom:0">Estimated Tax Deductions</div>
+      <label class="tax-switch" for="r_taxRegion"><span>Tax format</span><select id="r_taxRegion" aria-label="Tax format for the deductions table" onchange="setTaxRegion(this.value)"><option value="CA">Canada (T776 / CCA)</option><option value="US">USA (Schedule E)</option></select></label></div>
+    <div class="cs" style="margin-bottom:4px">For informational purposes only — consult a qualified CPA before filing</div>
+    <div id="taxNote" style="font-size:12px;color:var(--t3);margin-bottom:14px"></div>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>Category</th><th>Annual Amount</th><th>Typically Deductible</th></tr></thead>
+      <tbody id="taxTableBody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div id="resultFooter" style="margin-top:28px;padding:22px;border:1px solid var(--border);border-radius:10px;
+    background:var(--bg2);text-align:center;">
+    <div style="font-size:11px;color:var(--t3);letter-spacing:3px;text-transform:uppercase;">The Dad Side Hustle Co</div>
+    <div style="font-size:20px;font-weight:900;color:var(--gold);margin:4px 0;">STR Profitability Calculator</div>
+    <div style="font-size:13px;color:var(--t2)">For informational purposes only. Not financial, tax, or investment advice.</div>
+    <div style="font-size:12px;color:var(--t3);margin-top:6px">Pair with the Airbnb STR Tracker — available at TheDadSideHustleCo on Etsy</div>
+  </div>
+</div>
+
+<!-- PRINT-ONLY: inputs & assumptions summary -->
+<div id="printSummary"></div>
+
+<!-- ══ TAB 5: SCENARIO COMPARE ══════════════════════════ -->
+<div class="panel" id="panel-scenario">
+  <div class="sec-hdr">
+    <div class="sec-title">Scenario Comparison</div>
+    <div class="sec-desc">Save two scenarios from the Results tab and compare them side by side. Great for comparing conservative vs. optimistic pricing, or self-managed vs. managed.</div>
+  </div>
+
+  <div class="scn-header">
+    <div class="scn-side" id="scnSideA">
+      <div class="scn-label" style="color:var(--gold)">Scenario A</div>
+      <div class="scn-name">
+        <input type="text" id="scnNameA" placeholder="e.g. Conservative Pricing" style="padding:9px 12px;font-size:14px;">
+      </div>
+      <div id="scnDataA"><div class="scn-empty">Go to Results tab → click "Save as Scenario A"</div></div>
+    </div>
+    <div class="scn-side" id="scnSideB">
+      <div class="scn-label" style="color:var(--blue)">Scenario B</div>
+      <div class="scn-name">
+        <input type="text" id="scnNameB" placeholder="e.g. Peak Season Pricing" style="padding:9px 12px;font-size:14px;">
+      </div>
+      <div id="scnDataB"><div class="scn-empty">Go to Results tab → click "Save as Scenario B"</div></div>
+    </div>
+  </div>
+
+  <div class="chart-card" id="scnChartCard" style="display:none">
+    <div class="ct">Scenario A vs. B — Key Metrics</div>
+    <div class="cs">Side-by-side comparison of your two scenarios</div>
+    <div class="cw"><canvas id="scnChart" height="260"></canvas></div>
+  </div>
+
+  <div class="insight mt16" id="scnInsight" style="display:none"></div>
+
+  <div class="mt24 flex gap8 jb no-print">
+    <button class="btn btn-ghost btn-sm" onclick="clearScenario('A')">Clear Scenario A</button>
+    <button class="btn btn-ghost btn-sm" onclick="clearScenario('B')">Clear Scenario B</button>
+  </div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- METRICS BAR -->
+<div class="mbar">
+  <div class="mbar-item"><div class="mbar-lbl">Annual Revenue</div><div class="mbar-val" id="mb_rev">$0</div></div>
+  <div class="mbar-item"><div class="mbar-lbl">Net Profit</div><div class="mbar-val" id="mb_net">$0</div></div>
+  <div class="mbar-item"><div class="mbar-lbl">Monthly Cash Flow</div><div class="mbar-val" id="mb_mo">$0</div></div>
+  <div class="mbar-item"><div class="mbar-lbl">Cap Rate</div><div class="mbar-val neu" id="mb_cap">0%</div></div>
+  <div class="mbar-item"><div class="mbar-lbl">Cash-on-Cash</div><div class="mbar-val neu" id="mb_coc">0%</div></div>
+  <div class="mbar-item"><div class="mbar-lbl">Break-Even Occ.</div><div class="mbar-val neu" id="mb_be">0%</div></div>
+</div>
+
+
+
+  <!-- ═══════════════════ PANEL: HELP ═══════════════════════ -->
+  <div class="panel" id="panel-help">
+    <div class="sec-hdr" style="margin-bottom:24px;">
+      <div class="sec-title">How to Use This Calculator</div>
+      <div class="sec-desc">A quick guide to getting accurate, actionable results in under 5 minutes.</div>
+    </div>
+
+    <div class="help-section">
+      <h3><span class="h-num">1</span> Follow the Tabs in Order</h3>
+      <div class="help-step"><div class="step-icon">🏠</div><div class="step-body"><div class="step-title">Tab 1 — Property Info</div><div class="step-desc">Enter purchase price, down payment %, closing cost %, comparable market rate, and long-term rental estimate. These anchor all your returns.</div></div></div>
+      <div class="help-step"><div class="step-icon">💰</div><div class="step-body"><div class="step-title">Tab 2 — Revenue &amp; Rates</div><div class="step-desc">Set your nightly rate, cleaning fee, average stay length, and platform fee. Use the seasonal grid to adjust occupancy and rate multipliers month-by-month, or leave defaults for a flat estimate.</div></div></div>
+      <div class="help-step"><div class="step-icon">📋</div><div class="step-body"><div class="step-title">Tab 3 — Mortgage &amp; Expenses</div><div class="step-desc">Use the mortgage calculator, then click <strong>"Use This Amount →"</strong> to auto-fill your monthly payment. Fill in actual expenses or use the pre-filled defaults as a starting point.</div></div></div>
+      <div class="help-step"><div class="step-icon">📊</div><div class="step-body"><div class="step-title">Tab 4 — Results &amp; Analysis</div><div class="step-desc">Your full analysis updates in real time as you change inputs. Save two scenarios to compare side-by-side on Tab 5.</div></div></div>
+    </div>
+
+    <div class="help-section">
+      <h3><span class="h-num">2</span> Understanding Your Results</h3>
+      <div class="help-metric"><div class="hm-label">Annual Gross Revenue</div><div class="hm-desc">Total income before fees and expenses — room nights + cleaning fees collected.</div></div>
+      <div class="help-metric"><div class="hm-label">Annual Net Profit</div><div class="hm-desc">What you keep after all costs. Divide by 12 for monthly cash flow.</div></div>
+      <div class="help-metric"><div class="hm-label">Profit Margin</div><div class="hm-desc">Net ÷ gross revenue. Many investors look for <strong>25–30%+</strong> (rule of thumb).</div></div>
+      <div class="help-metric"><div class="hm-label">Cap Rate</div><div class="hm-desc">Net Operating Income ÷ Purchase Price. NOI is income after all operating costs, before the mortgage. Independent of financing. <strong>6–8%+</strong> is strong.</div></div>
+      <div class="help-metric"><div class="hm-label">Cash-on-Cash Return</div><div class="hm-desc">Net profit ÷ cash invested (down + closing). Many investors target <strong>8–12%+</strong> (rule of thumb).</div></div>
+      <div class="help-metric"><div class="hm-label">ADR</div><div class="hm-desc">Average Daily Rate — room revenue per booked night, excluding cleaning fees.</div></div>
+      <div class="help-metric"><div class="hm-label">RevPAR</div><div class="hm-desc">ADR × Occupancy %. A widely used STR performance metric.</div></div>
+      <div class="help-metric"><div class="hm-label">Breakeven Occupancy</div><div class="hm-desc">Minimum occupancy to cover all costs. If your actual occupancy exceeds this, you're profitable.</div></div>
+      <div class="help-metric"><div class="hm-label">Payback Period</div><div class="hm-desc">Years until cumulative profit equals your cash invested (excluding appreciation).</div></div>
+      <div class="help-metric"><div class="hm-label">Depreciation Benefit</div><div class="hm-desc">Estimated annual tax deduction from building depreciation (39 or 27.5 years, your choice). Consult a CPA.</div></div>
+    </div>
+
+    <div class="help-section">
+      <h3><span class="h-num">3</span> Investment Grade Explained</h3>
+      <div class="help-cols">
+        <div>
+          <div class="help-grade"><div class="hg-letter A">A</div><div class="hg-body"><div class="hg-title">Strong Investment</div><div class="hg-desc">Cap rate ≥ 8%, CoC ≥ 12%, breakeven &lt; 50%. All three tests passed.</div></div></div>
+          <div class="help-grade"><div class="hg-letter B">B</div><div class="hg-body"><div class="hg-title">Solid Investment</div><div class="hg-desc">Cap rate ≥ 5%, CoC ≥ 8%, breakeven &lt; 60%. Good returns with room to optimize.</div></div></div>
+        </div>
+        <div>
+          <div class="help-grade"><div class="hg-letter C">C</div><div class="hg-body"><div class="hg-title">Marginal Investment</div><div class="hg-desc">Cap rate ≥ 3%, CoC ≥ 4%, breakeven &lt; 75%. Below benchmarks — consider raising rate or cutting expenses.</div></div></div>
+          <div class="help-grade"><div class="hg-letter D">D</div><div class="hg-body"><div class="hg-title">Review Your Numbers</div><div class="hg-desc">Below all benchmarks. Re-evaluate pricing strategy, expenses, or the property itself.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h3><span class="h-num">4</span> Saving &amp; Loading Your Work</h3>
+      <div class="help-step"><div class="step-icon">💾</div><div class="step-body"><div class="step-title">Save to File</div><div class="step-desc">Click <strong>💾 Save</strong> in the top-right header. A <code>.json</code> file named after your property (e.g. <em>Beachfront-Bungalow-STR-Analysis.json</em>) will download to your computer. This file contains all your inputs and any saved scenarios.</div></div></div>
+      <div class="help-step"><div class="step-icon">📂</div><div class="step-body"><div class="step-title">Load from File</div><div class="step-desc">Click <strong>📂 Load</strong> in the header and choose a previously saved <code>.json</code> file. All inputs and scenarios will be restored exactly as you left them. You can keep a separate save file for each property you're analysing.</div></div></div>
+      <div class="help-step"><div class="step-icon">🔄</div><div class="step-body"><div class="step-title">Quick Resume (same browser)</div><div class="step-desc">The calculator also mirrors your last save to browser storage, so if you close and reopen the file in the same browser without clearing history, your last session loads automatically — no file needed.</div></div></div>
+    </div>
+
+    <div class="help-section">
+      <h3><span class="h-num">5</span> Pro Tips</h3>
+      <div class="help-tip"><strong>Mortgage flow:</strong> Always click "Use This Amount →" after adjusting the mortgage calculator. Otherwise the expense field stays at its previous value.</div>
+      <div class="help-tip"><strong>Expense units:</strong> Fields labeled <strong>/yr</strong> (Taxes, Insurance, License, Furniture, CPA) are entered annually — auto-divided by 12. All other dollar fields are monthly.</div>
+      <div class="help-tip"><strong>Seasonal rates:</strong> The Rate × slider multiplies your base nightly rate. 1.5 = 150% of your base rate. Below 1.0 = a discount. Occupancy sliders set each month independently.</div>
+      <div class="help-tip"><strong>Scenario Compare:</strong> Save Scenario A (base case) → adjust inputs → Save Scenario B → go to Tab 5 for side-by-side comparison.</div>
+      <div class="help-tip"><strong>One file per property:</strong> Name your property clearly in Tab 1 before saving — the save file is named after it. This makes it easy to keep separate saves for multiple properties.</div>
+      <div class="help-tip"><strong>Depreciation is not cash:</strong> It's a paper deduction that reduces taxable income. Your actual cash profit is the Net Profit figure. Consult a CPA for your specific situation.</div>
+    </div>
+
+    <div style="background:var(--bg3);border-radius:8px;padding:14px 16px;margin-top:8px;font-size:12px;color:var(--t2);line-height:1.6;">
+      <strong style="color:var(--t1);">Disclaimer:</strong> This calculator is for educational and planning purposes only. Results are estimates based on your inputs and are not financial advice. Actual returns will vary. Consult a licensed real estate professional and CPA before making investment decisions.<br><span style="opacity:.85">© The Dad Side Hustle Co. Licensed to the purchaser for personal use. Version <span id="app-version-label"></span></span>
+    </div>
+  </div>
+
+</div><!-- end .app -->
+
+<script>
+// ─── CONSTANTS ─────────────────────────────────────────────
+const APP_VERSION = '2.1.0';
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// Leap-year aware days-in-month (5B fix)
+function daysInMonth(m){return new Date(new Date().getFullYear(),m+1,0).getDate();}
+const GR=(r,g,b,a=1)=>`rgba(${r},${g},${b},${a})`;
+// Debounce handles for charts and autosave
+let _chartData={},_chartTimer,_autoSaveTimer;
+const GOLD=GR(243,156,18),GOLDF=GR(243,156,18,.15),
+      RED=GR(248,81,73,.85),REDF=GR(248,81,73,.12),
+      GREEN=GR(63,185,80,.85),GREENF=GR(63,185,80,.15),
+      BLUE=GR(88,166,255,.8),BLUEF=GR(88,166,255,.12),
+      PURPLE=GR(163,113,247,.8),
+      _x=0;
+let GRID=GR(255,255,255,.06),TXTC='#6E7681',ZERO='rgba(255,255,255,.3)',ZERO2='rgba(255,255,255,.2)',HOLE='#161B22',CTXT='#E6EDF3',CTXT2='#8B949E';
+function setChartTheme(print){
+  if(print){GRID='rgba(0,0,0,.12)';TXTC='#444';ZERO='rgba(0,0,0,.5)';ZERO2='rgba(0,0,0,.4)';HOLE='#fff';CTXT='#111';CTXT2='#555';}
+  else{GRID=GR(255,255,255,.06);TXTC='#6E7681';ZERO='rgba(255,255,255,.3)';ZERO2='rgba(255,255,255,.2)';HOLE='#161B22';CTXT='#E6EDF3';CTXT2='#8B949E';}
+}
+
+// ─── FORMAT ────────────────────────────────────────────────
+const $=id=>document.getElementById(id);
+const fmt=n=>n<0?`-$${Math.abs(Math.round(n)).toLocaleString()}`:`$${Math.round(n).toLocaleString()}`;
+const pct=n=>`${(Math.round(n*10)/10)}%`;
+const gv=(id,d=0)=>{const v=parseFloat($(id)?.value||'');return isNaN(v)?d:v;};
+const gs=id=>$(id)?.value||'';
+const sv=(id,v)=>{if($(id))$(id).textContent=v;};
+const sc=(id,v,cls)=>{if($(id)){$(id).textContent=v;$(id).className=cls;}};
+
+// ─── MORTGAGE CALC ─────────────────────────────────────────
+function calcMortgage(){
+  const price    = gv('purchasePrice',350000);
+  const down     = gv('downPct',20)/100;
+  const rate     = gv('mortRate',7)/100/12;
+  const term     = parseInt(gs('mortTerm')||'30');
+  const type     = gs('mortType')||'fixed';
+  const principal= price*(1-down);
+  $(  'mortAmount').value = Math.round(principal);
+  if($('downAmt')) $('downAmt').textContent = `= $${Math.round(price*down).toLocaleString()} cash invested`;
+  let payment=0,totalPaid=0;
+  if(type==='io'){
+    payment=principal*rate;
+    totalPaid=payment*term*12;
+  } else {
+    const n=term*12;
+    if(rate===0){payment=principal/n;}
+    else{payment=principal*(rate*Math.pow(1+rate,n))/(Math.pow(1+rate,n)-1);}
+    totalPaid=payment*n;
+  }
+  const totalInt=totalPaid-principal;
+  const intFirst=principal*rate;
+  const prinFirst=payment-intFirst;
+  sv('mortPaymentDisplay',fmt(payment));
+  sv('mortBreakdown',`Principal: ${fmt(prinFirst)} · Interest: ${fmt(intFirst)} · Total paid over ${term} yrs: ${fmt(totalPaid)} · Total interest: ${fmt(totalInt)}`);
+  if($('e_building')) $('e_building').value=Math.round(principal);
+}
+
+function applyMortgage(){
+  const val=parseFloat($('mortPaymentDisplay').textContent.replace(/[^0-9.]/g,''));
+  if(!isNaN(val)){$('e_mortgage').value=Math.round(val);calc();toast('Mortgage payment applied ✓');}
+}
+
+// ─── SEASON GRID ───────────────────────────────────────────
+function buildSeasonGrid(){
+  const g=$('seasonGrid'); if(!g)return;
+  const occ=gv('occupancy',65);
+  g.innerHTML=MONTHS.map((m,i)=>`
+    <div class="s-month">
+      <div class="s-month-nm">${m}</div>
+      <div class="s-occ-row"><span class="muted" style="font-size:13px">Occupancy</span>
+        <span class="s-occ-val" id="sOccVal${i}">${occ}%</span></div>
+      <input type="range" id="sOcc${i}" min="0" max="100" value="${occ}"
+        style="width:100%;margin-bottom:6px"
+        oninput="$('sOccVal${i}').textContent=this.value+'%';calc()">
+      <div class="s-rate-row">
+        <label>Rate ×</label>
+        <input type="number" class="s-rate-inp" id="sRate${i}" value="1.00" step="0.05" min="0.1" max="3" oninput="calc()">
+        <div class="s-dot" id="sDot${i}" style="background:var(--green)"></div>
+      </div>
+    </div>`).join('');
+}
+
+function updateSeasonDefaults(){
+  const occ=gv('occupancy',65);
+  for(let i=0;i<12;i++){
+    if(!$(`sOcc${i}`)?._touched){
+      if($(`sOcc${i}`)){$(`sOcc${i}`).value=occ;}
+      if($(`sOccVal${i}`)){$(`sOccVal${i}`).textContent=occ+'%';}
+    }
+  }
+  calc();
+}
+
+function setPlatformFee(){
+  const fees={airbnb:15.5,vrbo:8,both:12,direct:3,custom:null};
+  const p=gs('platform');
+  if(fees[p]!==null)$('platformFee').value=fees[p];
+}
+
+// ─── CANVAS CHARTS ─────────────────────────────────────────
+function clearCanvas(id){
+  const c=$(id);if(!c)return null;
+  const ctx=c.getContext('2d');
+  c.width=c.offsetWidth||c.parentElement.offsetWidth||600;
+  ctx.clearRect(0,0,c.width,c.height);
+  return ctx;
+}
+
+function drawBar(id,labels,datasets,opts={}){
+  const c=$(id);if(!c)return;
+  c.width=c.offsetWidth||c.parentElement.clientWidth||600;
+  const h=c.height=parseInt(c.getAttribute('height')||220);
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,h);
+  const pad={l:55,r:16,t:10,b:36};
+  const W=c.width-pad.l-pad.r, H=h-pad.t-pad.b;
+  const n=labels.length, ds=datasets.length, bw=Math.floor(W/n/(ds+1)), gap=Math.floor(bw*.4);
+  const allVals=datasets.flatMap(d=>d.data);
+  const maxV=Math.max(...allVals,0)*1.12, minV=Math.min(...allVals,0);
+  const range=maxV-minV||1;
+  const toY=v=>pad.t+H-(((v-minV)/range)*H);
+  const zeroY=toY(0);
+  // grid
+  ctx.strokeStyle=GRID;ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=pad.t+(H/5)*i;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+W,y);ctx.stroke();
+    const val=maxV-((maxV-minV)/5)*i;
+    ctx.fillStyle=TXTC;ctx.font='11px Inter,sans-serif';ctx.textAlign='right';
+    ctx.fillText(val>=1000?`$${Math.round(val/1000)}k`:fmt(val),pad.l-6,y+4);
+  }
+  // zero line
+  if(minV<0){
+    ctx.strokeStyle=ZERO2;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(pad.l,zeroY);ctx.lineTo(pad.l+W,zeroY);ctx.stroke();
+  }
+  // bars
+  datasets.forEach((ds2,di)=>{
+    ds2.data.forEach((v,xi)=>{
+      const x=pad.l+xi*(W/n)+(di*(bw+gap))+gap;
+      const barH=Math.abs(toY(v)-zeroY);
+      const y=v>=0?zeroY-barH:zeroY;
+      const r=3;
+      ctx.fillStyle=ds2.color;
+      ctx.beginPath();
+      ctx.roundRect?ctx.roundRect(x,y,bw,barH,r):ctx.rect(x,y,bw,barH);
+      ctx.fill();
+    });
+  });
+  // x labels — skip overlapping, clamp to canvas bounds
+  ctx.fillStyle=TXTC;ctx.font='11px Inter,sans-serif';
+  let lastBarRight=-Infinity;
+  labels.forEach((l,i)=>{
+    const tw=ctx.measureText(l).width;
+    let x=pad.l+i*(W/n)+(W/n)/2;
+    x=Math.max(pad.l+tw/2+2, Math.min(pad.l+W-tw/2-2, x));
+    if(x-tw/2-2 < lastBarRight) return;
+    ctx.textAlign='center';
+    ctx.fillText(l,x,h-8);
+    lastBarRight=x+tw/2;
+  });
+  // legend
+  if(opts.legend!==false){
+    let lx=pad.l;
+    datasets.forEach(ds2=>{
+      ctx.fillStyle=ds2.color;ctx.fillRect(lx,6,12,10);
+      ctx.fillStyle=TXTC;ctx.font='11px Inter,sans-serif';ctx.textAlign='left';
+      ctx.fillText(ds2.label,lx+16,15);
+      lx+=ctx.measureText(ds2.label).width+36;
+    });
+  }
+}
+
+function drawDonut(id,labels,data,colors){
+  const c=$(id);if(!c)return;
+  c.width=c.parentElement.offsetWidth||400;
+  const h=c.height=parseInt(c.getAttribute('height')||230);
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,h);
+  const cx=c.width*0.38, cy=h/2+8, r=Math.min(cx,cy)-20, ir=r*.62;
+  const total=data.reduce((a,b)=>a+b,0)||1;
+  let angle=-Math.PI/2;
+  data.forEach((v,i)=>{
+    const slice=(v/total)*Math.PI*2;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,angle,angle+slice);ctx.closePath();
+    ctx.fillStyle=colors[i%colors.length];ctx.fill();
+    angle+=slice;
+  });
+  // hole
+  ctx.beginPath();ctx.arc(cx,cy,ir,0,Math.PI*2);
+  ctx.fillStyle=HOLE;ctx.fill();
+  // center text
+  const biggest=data.reduce((a,b,i,arr)=>b>arr[a]?i:a,0);
+  const bigPct=Math.round((data[biggest]/total)*100);
+  ctx.fillStyle=CTXT;ctx.font='bold 16px Inter,sans-serif';ctx.textAlign='center';
+  ctx.fillText(labels[biggest].substring(0,8),cx,cy-4);
+  ctx.font='13px Inter,sans-serif';ctx.fillStyle=CTXT2;
+  ctx.fillText(bigPct+'%',cx,cy+14);
+  // legend
+  const lx=c.width*0.72, topY=20, lh=20;
+  ctx.textAlign='left';
+  labels.forEach((l,i)=>{
+    if(i>9)return;
+    const y=topY+i*lh;
+    ctx.fillStyle=colors[i%colors.length];ctx.fillRect(lx,y,12,11);
+    ctx.fillStyle=TXTC;ctx.font='11px Inter,sans-serif';
+    const pctV=total>0?Math.round((data[i]/total)*100):0;
+    ctx.fillText(`${l} ${pctV}%`,lx+16,y+10);
+  });
+}
+
+function drawLine(id,labels,datasets,opts={}){
+  const c=$(id);if(!c)return;
+  const _r=c.getBoundingClientRect();c.width=Math.round(_r.width)||c.parentElement.offsetWidth||600;
+  const h=c.height=parseInt(c.getAttribute('height')||240);
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,h);
+  const pad={l:62,r:35,t:14,b:52};
+  const W=c.width-pad.l-pad.r;
+  const H=h-pad.t-pad.b;
+  const allVals=datasets.flatMap(d=>d.data);
+  const _hi0=Math.max(...allVals,0),_lo0=Math.min(...allVals,0);
+  const _top=(_hi0>0?_hi0*1.1:Math.abs(_lo0)*0.1)||1;
+  // round-number ticks that always include $0
+  const _raw=(_top-_lo0)/4,_mag=Math.pow(10,Math.floor(Math.log10(_raw))),_f=_raw/_mag;
+  const _step=(_f<=1?1:_f<=2?2:_f<=2.5?2.5:_f<=5?5:10)*_mag;
+  const minV=Math.floor(_lo0/_step+1e-9)*_step,maxV=Math.ceil(_top/_step-1e-9)*_step;
+  const nTick=Math.round((maxV-minV)/_step);
+  const range=maxV-minV||1;
+  const toX=(i)=>pad.l+(i/Math.max(labels.length-1,1))*W;
+  const toY=v=>pad.t+H-(((v-minV)/range)*H);
+  // grid + y labels
+  for(let i=0;i<=nTick;i++){
+    const val=maxV-_step*i;const y=toY(val);
+    ctx.strokeStyle=GRID;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+W,y);ctx.stroke();
+    ctx.fillStyle=TXTC;ctx.font='11px Inter,sans-serif';ctx.textAlign='right';
+    {const av=Math.abs(val),sg=val<0&&Math.round(av)>0?'-':'';ctx.fillText(av>=1000?`${sg}$${(av/1000).toFixed(av>=10000?0:1).replace(/\.0$/,'')}k`:`${sg}$${Math.round(av).toLocaleString('en-US')}`,pad.l-5,y+4);}
+  }
+  // zero line
+  if(minV<0){
+    const zy=toY(0);
+    ctx.strokeStyle=ZERO;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(pad.l,zy);ctx.lineTo(pad.l+W,zy);ctx.stroke();
+  }
+  // fill + line + dots
+  datasets.forEach(ds=>{
+    if(ds.fill){
+      ctx.beginPath();
+      ds.data.forEach((v,i)=>{i===0?ctx.moveTo(toX(i),toY(v)):ctx.lineTo(toX(i),toY(v));});
+      ctx.lineTo(toX(ds.data.length-1),toY(minV<0?0:minV));
+      ctx.lineTo(toX(0),toY(minV<0?0:minV));
+      ctx.closePath();
+      ctx.fillStyle=ds.fillColor||GR(243,156,18,.1);ctx.fill();
+    }
+    ctx.beginPath();ctx.strokeStyle=ds.color;ctx.lineWidth=2.5;ctx.lineJoin='round';
+    ds.data.forEach((v,i)=>{i===0?ctx.moveTo(toX(i),toY(v)):ctx.lineTo(toX(i),toY(v));});
+    ctx.stroke();
+    ds.data.forEach((v,i)=>{
+      ctx.beginPath();ctx.arc(toX(i),toY(v),4,0,Math.PI*2);
+      ctx.fillStyle=v>=0?GREEN:RED;ctx.fill();
+    });
+  });
+  // x-axis baseline
+  ctx.strokeStyle=GRID;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t+H);ctx.lineTo(pad.l+W,pad.t+H);ctx.stroke();
+  // x-axis labels at a fixed offset below the chart area — cannot be clipped
+  // toX(0)=pad.l, toX(last)=pad.l+W so end labels sit exactly at the axis edges
+  // pad.r=20 ensures the rightmost label has room without overflowing canvas
+  const labelY=pad.t+H+22;
+  ctx.fillStyle=TXTC;ctx.font='12px Inter,sans-serif';
+  labels.forEach((l,i)=>{
+    ctx.textAlign=i===0?'left':i===labels.length-1?'right':'center';
+    ctx.fillText(l,toX(i),labelY);
+  });
+  // legend
+  if(datasets.length>1){
+    let lx=pad.l;
+    datasets.forEach(ds=>{
+      ctx.strokeStyle=ds.color;ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(lx,8);ctx.lineTo(lx+18,8);ctx.stroke();
+      ctx.fillStyle=TXTC;ctx.font='11px Inter,sans-serif';ctx.textAlign='left';
+      ctx.fillText(ds.label,lx+22,12);
+      lx+=ctx.measureText(ds.label).width+44;
+    });
+  }
+}
+
+// ─── MAIN CALC ─────────────────────────────────────────────
+function calc(){
+  const nightlyRate = gv('nightlyRate',175);
+  const cleaningFee = gv('cleaningFee',85);
+  const avgStay     = Math.max(1,gv('avgStay',3),gv('minStay',1));
+  const baseOcc     = gv('occupancy',65)/100;
+  const platFee     = gv('platformFee',15.5)/100;
+  const purchPrice  = gv('purchasePrice',350000);
+  const downPct     = gv('downPct',20)/100;
+  const closingPct  = gv('closingPct',3)/100;
+  const appPct      = gv('appreciationPct',4)/100;
+  const buildPct    = gv('buildingPct',80)/100;
+  const bonusDepPct = gv('e_bonusDepPct',100)/100;
+  const shortLife   = gv('e_shortLifeAssets',15000);
+
+  // Sync building pct and compRate across tabs
+  if($('e_buildingPct'))$('e_buildingPct').value=Math.round(buildPct*100);
+  const compRateVal=gv('compRate',0);
+  if($('compRate2')&&document.activeElement?.id!=='compRate2')$('compRate2').value=compRateVal;
+
+  const mortM       = gv('e_mortgage',1864);
+  const taxesM      = gv('e_taxes',4800)/12;
+  const insM        = gv('e_insurance',2400)/12;
+  const hoaM        = gv('e_hoa',0);
+  const licenseM    = gv('e_license',0)/12;
+  const mgmtPct     = gv('e_mgmt',0)/100;
+  const electricM   = gv('e_electric',140);
+  const gasM        = gv('e_gas',60);
+  const waterM      = gv('e_water',55);
+  const internetM   = gv('e_internet',80);
+  const cleanCost   = gv('e_cleaning',80);
+  const suppliesP   = gv('e_supplies',25);
+  const linenM      = gv('e_linen',40);
+  const repairsM    = gv('e_repairs',150);
+  const capexPct    = gv('e_capex',5)/100;
+  const furnM       = gv('e_furniture',1200)/12;
+  const landscapeM  = gv('e_landscape',0);
+  const poolM       = gv('e_pool',0);
+  const mktM        = gv('e_marketing',30);
+  const cpaM        = gv('e_cpa',600)/12;
+  const otherM      = gv('e_other',50);
+
+  const fixedBase   = mortM+taxesM+insM+hoaM+licenseM+electricM+gasM+waterM+internetM+linenM+repairsM+furnM+landscapeM+poolM+mktM+cpaM+otherM;
+
+  // Monthly calcs
+  const mRev=[],mExp=[],mProfit=[],mOcc=[],mNights=[],mGross=[],mPlat=[],mCleanRev=[];
+  let totGross=0,totNetRev=0,totExp=0,totProfit=0,totBooked=0,totAvail=0,totRoomRev=0;
+
+  for(let i=0;i<12;i++){
+    const sOcc = gv(`sOcc${i}`,Math.round(baseOcc*100))/100;
+    const sRate= gv(`sRate${i}`,1.0);
+    const d=daysInMonth(i);
+    const booked=Math.round(d*sOcc);
+    const rate=nightlyRate*sRate;
+    const bookings=booked>0?booked/avgStay:0;
+    const cRev=bookings*cleaningFee;
+    const gross=booked*rate+cRev;
+    const platF=gross*platFee;
+    const netRev=gross-platF;
+    const varExp=bookings*(cleanCost+suppliesP)+(gross*capexPct)+(gross*mgmtPct);
+    const totalExp=fixedBase+varExp;
+    const profit=netRev-totalExp;
+    mRev.push(Math.round(gross));mExp.push(Math.round(totalExp));
+    mProfit.push(Math.round(profit));mOcc.push(Math.round(sOcc*100));
+    mNights.push(booked);mGross.push(Math.round(gross));
+    mPlat.push(Math.round(platF));mCleanRev.push(Math.round(cRev));
+    totGross+=gross;totNetRev+=netRev;totExp+=totalExp;
+    totProfit+=profit;totBooked+=booked;totAvail+=d;
+    totRoomRev+=booked*rate;
+  }
+
+  const avgOcc   = (totBooked/totAvail)*100;
+  const adr      = totBooked>0?totRoomRev/totBooked:0;
+  const revpar   = totAvail>0?totRoomRev/totAvail:0;
+  const margin   = totGross>0?(totProfit/totGross)*100:0;
+  const downAmt  = purchPrice*downPct;
+  const cashInv  = downAmt+purchPrice*closingPct;
+  const roi      = cashInv>0?(totProfit/cashInv)*100:0;
+  // NOI = all operating costs (incl. cleaning & supplies), before the mortgage
+  const noi      = totProfit+mortM*12;
+  const caprate  = purchPrice>0?(noi/purchPrice)*100:0;
+  const payback  = totProfit>0?cashInv/totProfit:99;
+  const region   = (gs('e_taxRegion')==='US')?'US':'CA';
+  document.body.dataset.region=region;
+  {const _rs=$('r_taxRegion');if(_rs&&_rs.value!==region)_rs.value=region;}
+  const depYears = parseFloat(gs('e_depYears'))||39;
+  const ccaRate  = Math.max(0,gv('e_ccaRate',4))/100;
+  const annDep   = region==='CA'?(purchPrice*buildPct*ccaRate):(purchPrice*buildPct)/depYears;
+  const bonusDep = region==='CA'?0:shortLife*bonusDepPct;
+
+  // Breakeven
+  const totDays    = Array.from({length:12},(_,i)=>daysInMonth(i)).reduce((a,b)=>a+b,0);
+  // Per-night figures; with no booked nights, fall back to the rate inputs
+  const avgRateMult= MONTHS.reduce((a,_,i)=>a+gv(`sRate${i}`,1)/12,0);
+  const avgGrossPN = totBooked>0?totGross/totBooked:(nightlyRate*avgRateMult+cleaningFee/avgStay);
+  const avgNetPN   = totBooked>0?totNetRev/totBooked:avgGrossPN*(1-platFee);
+  const avgVarPN   = (cleanCost/avgStay)+(suppliesP/avgStay)+(avgGrossPN*(capexPct+mgmtPct));
+  const netPN      = avgNetPN-avgVarPN;
+  const annFixed   = fixedBase*12;
+  const beNights   = netPN>0?annFixed/netPN:totDays;
+  const beOver     = !(netPN>0)||beNights>totDays;   // cannot break even even at 100%
+  const beOcc      = beOver?100:(beNights/totDays)*100;
+  const beTxt      = beOver?'Over 100%':pct(beOcc);
+
+  // LTR
+  const ltrRent= gv('ltrRent',2200)*12;
+  const ltrExpA= gv('ltrExp',1600)*12;
+  const ltrNet = ltrRent-ltrExpA;
+
+  // 5-year projection
+  const proj5=[]; let cumProfit=0;
+  for(let y=1;y<=5;y++){
+    const yProfit=totProfit*(1.02**(y-1));
+    cumProfit+=yProfit;
+    const equity=purchPrice*((1+appPct)**y)-purchPrice;
+    proj5.push({y,profit:Math.round(cumProfit),equity:Math.round(equity),total:Math.round(cumProfit+equity)});
+  }
+
+  // Investment verdict
+  let grade='D',vtitle='Needs Improvement',vdesc='';
+  if(caprate>=8&&roi>=12&&beOcc<50){grade='A';vtitle='Strong Investment';}
+  else if(caprate>=5&&roi>=8&&beOcc<60){grade='B';vtitle='Solid Investment';}
+  else if(caprate>=3&&roi>=4&&beOcc<75){grade='C';vtitle='Marginal Investment';}
+  else{grade='D';vtitle='Review Your Numbers';}
+  const verdictDescs={
+    A:`Cap rate of ${pct(caprate)} and ${pct(roi)} cash-on-cash return both exceed benchmarks. Break-even at ${beTxt} gives you a strong safety margin. This deal looks solid.`,
+    B:`Decent returns with a ${pct(caprate)} cap rate and ${pct(roi)} cash-on-cash. Break-even at ${beTxt} is manageable. Room to optimize pricing or cut expenses to push to an A.`,
+    C:`Returns are below typical benchmarks. Cap rate ${pct(caprate)}, cash-on-cash ${pct(roi)}. Consider raising your nightly rate or reducing expenses before committing.`,
+    D:`At current numbers, this property does not meet investment benchmarks. Cap rate ${pct(caprate)}, cash-on-cash ${pct(roi)}. Revisit your pricing, expenses, or purchase price.`,
+  };
+  vdesc=verdictDescs[grade];
+
+  // ─── UPDATE DOM ──────────────────────
+  const pName=gs('propName')||'Your Property';
+  sv('r-propName',`${pName} — Analysis`);
+  sv('r-propSub',[gs('propType')||'Property',`${gs('propBeds')||'?'} Bed`,gs('propState'),`${pct(avgOcc)} avg occupancy`].filter(Boolean).join(' · '));
+
+  // Verdict
+  const vb=$('verdictBox');
+  if(vb){vb.className=`verdict-box ${grade}`;}
+  sc('verdictGrade',grade,`v-grade ${grade}`);
+  sv('verdictTitle',vtitle);sv('verdictDesc',vdesc);
+
+  // Cards
+  sv('r_gross',fmt(totGross));
+  sc('r_net',fmt(totProfit),`c-val ${totProfit>=0?'green':'red'}`);
+  sv('r_netMo',fmt(totProfit/12)+'/month');
+  sc('r_monthly',fmt(totProfit/12),`c-val ${totProfit/12>=0?'blue':'red'}`);
+  sc('r_margin',pct(margin),`c-val ${margin>=25?'green':margin>=0?'':'red'}`);
+  sv('r_occDisp',`Avg occupancy: ${pct(avgOcc)}`);
+  sc('r_caprate',pct(caprate),`c-val ${caprate>=6?'green':caprate>=3?'':'red'}`);
+  sc('r_coc',pct(roi),`c-val ${roi>=10?'green':roi>=5?'':'red'}`);
+  sv('r_cashInvested',`$${Math.round(cashInv).toLocaleString()} cash invested`);
+  sv('r_cashInvested2',`On $${Math.round(cashInv).toLocaleString()} invested`);
+  sv('r_adr',fmt(adr));sv('r_revpar',fmt(revpar));
+  sc('r_exp',fmt(totExp),'c-val red');
+  sv('r_expMo',fmt(totExp/12)+'/month');
+  sc('r_breakeven',beTxt,`c-val ${beOcc<50?'green':beOcc<70?'':'red'}`);
+  sv('r_payback',payback>=99?'N/A':`${(Math.round(payback*10)/10)} yrs`);
+  sv('r_dep',fmt(annDep));
+
+  // Depreciation box
+  sv('depAnnual',fmt(annDep));
+  sv('depBreakdown',region==='CA'?`Building CCA: ${fmt(annDep)}/yr (${(ccaRate*100).toFixed(1).replace(/\.0$/,'')}% of building value, before the net-income limit)`:`Building depreciation: ${fmt(annDep)}/yr (${depYears}-yr schedule) + Bonus depreciation (yr 1): ${fmt(bonusDep)}`);
+  const _de=document.querySelector('#depBox .dep-txt strong');if(_de)_de.textContent=region==='CA'?'Estimated Annual CCA (Capital Cost Allowance)':'Estimated Annual Depreciation Deduction';
+
+  // Metrics bar
+  const sv2=(id,v,neg)=>{const e=$(id);if(e){e.textContent=v;e.className=neg?'mbar-val neg':totProfit>=0?'mbar-val':'mbar-val neg';}};
+  sv('mb_rev',fmt(totGross));
+  const mn=$(  'mb_net');if(mn){mn.textContent=fmt(totProfit);mn.className=totProfit>=0?'mbar-val':'mbar-val neg';}
+  const mm=$('mb_mo');if(mm){mm.textContent=fmt(totProfit/12);mm.className=totProfit/12>=0?'mbar-val':'mbar-val neg';}
+  sv('mb_cap',pct(caprate));sv('mb_coc',pct(roi));sv('mb_be',beTxt);
+
+  // Comparison
+  sv('cmp_strRev',fmt(totNetRev));sv('cmp_strExp',fmt(totExp));
+  sc('cmp_strNet',fmt(totProfit),`cv ${totProfit>=0?'pos':'neg'}`);
+  sv('cmp_strMo',fmt(totProfit/12));
+  sv('cmp_ltrRev',fmt(ltrRent));sv('cmp_ltrExp',fmt(ltrExpA));
+  sc('cmp_ltrNet',fmt(ltrNet),`cv ${ltrNet>=0?'pos':'neg'}`);
+  sv('cmp_ltrMo',fmt(ltrNet/12));
+  const diff=totProfit-ltrNet;
+  const insightEl=$('insightBox');
+  if(insightEl)insightEl.innerHTML=diff>0
+    ?`📈 STR earns you <strong>${fmt(diff)} more per year</strong> (${fmt(diff/12)}/mo) than long-term renting — a ${pct((diff/Math.max(1,Math.abs(ltrNet)))*100)} premium for the extra management effort. Your break-even is ${beTxt} — you need to be booked more than that to stay profitable.`
+    :`⚠️ At current numbers, long-term renting would net <strong>${fmt(Math.abs(diff))} more per year</strong> with far less effort. Consider raising your nightly rate or reducing expenses to make STR worthwhile.`;
+
+  // Monthly table
+  const tb=$('monthTableBody');
+  if(tb)tb.innerHTML=MONTHS.map((m,i)=>`<tr>
+    <td class="bold">${m}</td><td>${mOcc[i]}%</td><td>${mNights[i]}</td>
+    <td>${fmt(mGross[i])}</td><td class="neg">${fmt(mPlat[i])}</td>
+    <td>${fmt(mCleanRev[i])}</td><td class="neg">${fmt(mExp[i])}</td>
+    <td class="${mProfit[i]>=0?'pos':'neg'}">${fmt(mProfit[i])}</td></tr>`).join('')
+    +`<tr class="tot"><td>TOTAL</td><td>${pct(avgOcc)}</td><td>${totBooked}</td>
+    <td>${fmt(totGross)}</td><td class="neg">${fmt(totGross*platFee)}</td>
+    <td>${fmt(mCleanRev.reduce((a,b)=>a+b,0))}</td><td class="neg">${fmt(totExp)}</td>
+    <td class="${totProfit>=0?'pos':'neg'}">${fmt(totProfit)}</td></tr>`;
+
+  // Tax table
+  // Year-1 mortgage interest from the loan inputs (capped at the payments entered)
+  const _loan=gv('mortAmount',0),_mr=gv('mortRate',7)/100/12,_mt=parseInt(gs('mortTerm')||'30'),_ty=gs('mortType')||'fixed';
+  let _int1=0;
+  if(_loan>0){
+    if(_ty==='io'||_mr===0){_int1=_ty==='io'?_loan*_mr*12:0;}
+    else{const _n=_mt*12,_pay=_loan*(_mr*Math.pow(1+_mr,_n))/(Math.pow(1+_mr,_n)-1);let _b=_loan;for(let k=0;k<12&&k<_n;k++){const i=_b*_mr;_int1+=i;_b-=_pay-i;}}
+  }
+  const mortInt1=Math.min(mortM*12,_int1);
+  const utilA=(electricM+gasM+waterM+internetM)*12;
+  const cleanA=cleanCost*(totBooked/avgStay);
+  const suppliesA=suppliesP*(totBooked/avgStay)+linenM*12;
+  const platFeeA=totGross-totNetRev;
+  let taxRows,taxHead,taxNote;
+  if(region==='CA'){
+    taxHead=['Category','Annual Amount','T776 Line (typical)'];
+    const rows0=[
+      ['Mortgage Interest (Yr 1)',mortInt1,'Interest and bank charges, Line 8710'],
+      ['Property Taxes',taxesM*12,'Property taxes, Line 9180'],
+      ['Insurance',insM*12,'Insurance, Line 8690'],
+      ['HOA / Condo Fees',hoaM*12,'Other expenses, Line 9270'],
+      ['STR License/Permit',licenseM*12,'Other expenses, Line 9270'],
+      ['Utilities',utilA,'Utilities, Line 9220 (rental use only)'],
+      ['Cleaning & Turnover',cleanA,'Other expenses, Line 9270'],
+      ['Repairs & Maintenance',repairsM*12,'Repairs and maintenance, Line 8960'],
+      ['Platform / Booking Fees',platFeeA,'Other expenses, Line 9270'],
+      ['Advertising',mktM*12,'Advertising, Line 8521'],
+      ['Property Management',totGross*mgmtPct,'Management and administration fees, Line 8871'],
+      ['Accounting / CPA',cpaM*12,'Professional fees, Line 8860'],
+      ['Supplies & Toiletries',suppliesA,'Office expenses, Line 8810 (or Other, 9270)'],
+      ['CapEx Reserve',totGross*capexPct,'Only when spent — repair or capital cost'],
+      ['Furniture & Décor',furnM*12,'Expense or CCA — consult your accountant'],
+    ];
+    const before=rows0.reduce((a,r)=>a+r[1],0);
+    const netBefore=totGross-before;
+    const ccaAllowed=Math.max(0,Math.min(annDep,netBefore));
+    taxRows=rows0.slice(0,13).concat([
+      ['Capital Cost Allowance (CCA)',ccaAllowed,ccaAllowed<annDep-0.5?'Line 9936 — limited: CCA cannot create or increase a rental loss':'Line 9936 (Class 1 building)']
+    ]).concat(rows0.slice(13));
+    taxNote='⚠ Line numbers refer to Canada Revenue Agency Form T776 (Statement of Real Estate Rentals). CCA is limited to your net rental income before CCA and cannot create or increase a rental loss. First-year rules, other CCA classes, and recapture on sale are not modeled. Which expenses you can claim depends on your situation; this is an estimate only — confirm with an accountant.';
+  }else{
+    taxHead=['Category','Annual Amount','Typically Deductible'];
+    taxRows=[
+    ['Mortgage Interest (Yr 1)',mortInt1,'Yes — Schedule E Line 12'],
+    ['Property Taxes',taxesM*12,'Yes — Schedule E Line 16'],
+    ['Insurance',insM*12,'Yes — Schedule E Line 9'],
+    ['HOA Fees',hoaM*12,'Yes — Schedule E Line 19 (other)'],
+    ['STR License/Permit',licenseM*12,'Yes — Schedule E Line 19 (other)'],
+    ['Utilities',utilA,'Yes — Schedule E Line 17 (STR use only)'],
+    ['Cleaning & Turnover',cleanA,'Yes — Schedule E Line 7'],
+    ['Repairs & Maintenance',repairsM*12,'Yes — Schedule E Line 14'],
+    ['Platform / Booking Fees',platFeeA,'Yes — Schedule E Line 19 (other)'],
+    ['CapEx Reserve',totGross*capexPct,'Partial — when spent'],
+    ['Furniture & Décor',furnM*12,'Depreciation or expense — consult CPA'],
+    ['Advertising',mktM*12,'Yes — Schedule E Line 5'],
+    ['Property Management',totGross*mgmtPct,'Yes — Schedule E Line 11'],
+    ['Accounting / CPA',cpaM*12,'Yes — Schedule E Line 10'],
+    ['Building Depreciation',annDep,'Yes — Schedule E Line 18'],
+    ['Bonus Depreciation (Yr 1)',bonusDep,'Yes — Line 18, consult CPA'],
+    ['Supplies & Toiletries',suppliesA,'Yes — Schedule E Line 15'],
+    ];
+    taxNote='⚠ Line numbers refer to US Schedule E (Form 1040). If you provide substantial services to guests (such as meals or concierge services), the income may belong on Schedule C instead. Deductibility depends on your personal tax situation, usage %, and applicable law. This is an estimate only.';
+  }
+  const _th=document.querySelector('#taxSection thead tr');if(_th)_th.innerHTML=taxHead.map(h=>`<th>${h}</th>`).join('');
+  const _tn=$('taxNote');if(_tn)_tn.textContent=taxNote;
+  const tb2=$('taxTableBody');
+  if(tb2){
+    const tot=taxRows.reduce((a,r)=>a+r[1],0);
+    tb2.innerHTML=taxRows.map(r=>`<tr><td>${r[0]}</td><td>${fmt(r[1])}</td>
+      <td style="color:var(--green)">${r[2]}</td></tr>`).join('')
+      +`<tr class="tot"><td>Total Estimated Deductions</td><td>${fmt(tot)}</td><td></td></tr>`;
+  }
+
+  // Season dots
+  for(let i=0;i<12;i++){
+    const o=gv(`sOcc${i}`,Math.round(baseOcc*100));
+    const d=$(`sDot${i}`);
+    if(d)d.style.background=o>75?'var(--gold)':o>50?'var(--green)':'var(--red)';
+  }
+
+  // ─── SCHEDULE CHART REDRAW (debounced 80ms) ─────────────
+  const occPts=[10,20,30,40,50,60,70,80,90,100];
+  const sensData=occPts.map(o=>{
+    const n=Math.round(totDays*(o/100));const bk=n>0?n/avgStay:0;
+    const avgR=nightlyRate*(MONTHS.reduce((a,_,i)=>a+gv(`sRate${i}`,1)/12,0));
+    const gr=n*avgR+bk*cleaningFee;const nr=gr*(1-platFee);
+    const ve=bk*(cleanCost+suppliesP)+gr*(capexPct+mgmtPct);
+    return Math.round(nr-annFixed-ve);});
+  const expLabels=['Mortgage','Taxes','Insurance','Utilities','Cleaning','Supplies','Repairs','CapEx','Furniture','Mgmt','Mktg','Other'];
+  const expVals=[mortM*12,taxesM*12,insM*12,(electricM+gasM+waterM+internetM)*12,
+    cleanA,suppliesA,repairsM*12,totGross*capexPct,furnM*12,totGross*mgmtPct,mktM*12,
+    (landscapeM+poolM+cpaM+otherM)*12].map(v=>Math.max(0,Math.round(v)));
+  _chartData={mRev,mExp,mProfit,sensData,occPts,expLabels,expVals,proj5};
+  scheduleCharts();
+
+  // Validation + autosave
+  validateInputs();
+  autoSave();
+
+  // Return summary for scenario saving
+  return {totGross,totNetRev,totProfit,totExp,avgOcc,margin,caprate,roi,adr,revpar,beOcc,beOver,payback,grade};
+}
+
+// ─── DEBOUNCED CHART DRAWING (2A) ──────────────────────────
+function scheduleCharts(){
+  clearTimeout(_chartTimer);
+  _chartTimer=setTimeout(drawAllCharts,80);
+}
+function drawAllCharts(){
+  const {mRev,mExp,mProfit,sensData,occPts,expLabels,expVals,proj5}=_chartData;
+  if(!mRev)return;
+  const dColors=['#F39C12','#E67E22','#F1C40F','#58A6FF','#3FB950','#26A641','#8957E5','#A371F7','#D35400','#DB6D28','#6E7681','#484F58'];
+  drawBar('barChart',MONTHS,[{label:'Gross Revenue',data:mRev,color:GOLD},{label:'Total Expenses',data:mExp,color:RED}]);
+  drawDonut('donutChart',expLabels,expVals,dColors);
+  drawLine('profitChart',MONTHS,[{data:mProfit,color:GOLD,fill:true,fillColor:GR(243,156,18,.08),label:'Net Profit'}]);
+  drawLine('sensitivityChart',occPts.map(o=>o+'%'),[{data:sensData,color:BLUE,fill:true,fillColor:BLUEF,label:'Annual Net Profit'}]);
+  drawLine('projectionChart',['Yr 1','Yr 2','Yr 3','Yr 4','Yr 5'],[
+    {data:proj5.map(p=>p.profit),color:GREEN,fill:true,fillColor:GREENF,label:'Cumulative Profit'},
+    {data:proj5.map(p=>p.equity),color:BLUE,fill:false,label:'Property Equity Gain'},
+    {data:proj5.map(p=>p.total),color:GOLD,fill:false,label:'Combined Total Return'},
+  ]);
+}
+
+// ─── AUTOSAVE TO LOCALSTORAGE (4B) ─────────────────────────
+function autoSave(){
+  clearTimeout(_autoSaveTimer);
+  _autoSaveTimer=setTimeout(()=>{
+    localStorage.setItem('strCalcV2',JSON.stringify(collectInputs()));
+    localStorage.setItem('strScenarios',JSON.stringify(scenarios));
+    const ind=$('autoSaveInd');
+    if(ind){ind.classList.add('show');setTimeout(()=>ind.classList.remove('show'),2000);}
+  },1500);
+}
+
+// ─── SOFT VALIDATION (4C) ──────────────────────────────────
+function validateInputs(){
+  const checks=[
+    {id:'nightlyRate',  warnId:'warn-nightlyRate',  test:v=>v<=0, msg:'Nightly rate must be greater than $0 — all revenue will show as $0'},
+    {id:'purchasePrice',warnId:'warn-purchasePrice',test:v=>v<=0, msg:'Purchase price must be greater than $0 for cap rate and ROI to calculate'},
+    {id:'occupancy',    warnId:'warn-occupancy',    test:v=>v<=0, msg:'Occupancy of 0% means no bookings — revenue will show as $0'},
+  ];
+  checks.forEach(({id,warnId,test,msg})=>{
+    const el=$(id);const w=$(warnId);if(!el||!w)return;
+    const bad=test(parseFloat(el.value||'0'));
+    el.closest('.iw')?.classList.toggle('warn',bad);
+    w.textContent=msg;w.classList.toggle('show',bad);
+  });
+}
+
+// ─── TABS ──────────────────────────────────────────────────
+function showTab(t){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.t-btn').forEach(b=>b.classList.remove('active'));
+  $('panel-'+t)?.classList.add('active');
+  $('tb-'+t)?.classList.add('active');
+  if(t==='results')setTimeout(calc,80);
+}
+
+// ─── SCENARIO SAVE/COMPARE ─────────────────────────────────
+let scenarios={A:null,B:null};
+
+function saveScenario(ab){
+  const s=calc();
+  if(!s)return;
+  scenarios[ab]={...s,name:$(`scnName${ab}`)?.value||`Scenario ${ab}`};
+  localStorage.setItem('strScenarios',JSON.stringify(scenarios));
+  renderScenarios();
+  toast(`Scenario ${ab} saved ✓`);
+}
+
+function clearScenario(ab){
+  scenarios[ab]=null;
+  try{localStorage.setItem('strScenarios',JSON.stringify(scenarios));}catch(e){}
+  renderScenarios();
+}
+
+function renderScenarios(){
+  ['A','B'].forEach(ab=>{
+    const sc=scenarios[ab];
+    const el=$(`scnData${ab}`);
+    if(!el)return;
+    if(!sc){el.innerHTML=`<div class="scn-empty">Go to Results tab → click "Save as Scenario ${ab}"</div>`;return;}
+    el.innerHTML=`
+      <div class="scn-stat"><span class="sk">Annual Revenue</span><span class="sv">${fmt(sc.totGross)}</span></div>
+      <div class="scn-stat"><span class="sk">Annual Net Profit</span><span class="sv ${sc.totProfit>=0?'pos':'neg'}">${fmt(sc.totProfit)}</span></div>
+      <div class="scn-stat"><span class="sk">Monthly Cash Flow</span><span class="sv">${fmt(sc.totProfit/12)}</span></div>
+      <div class="scn-stat"><span class="sk">Cap Rate</span><span class="sv">${pct(sc.caprate)}</span></div>
+      <div class="scn-stat"><span class="sk">Cash-on-Cash Return</span><span class="sv">${pct(sc.roi)}</span></div>
+      <div class="scn-stat"><span class="sk">Break-Even Occupancy</span><span class="sv">${sc.beOver?'Over 100%':pct(sc.beOcc)}</span></div>
+      <div class="scn-stat"><span class="sk">Investment Grade</span><span class="sv">${sc.grade}</span></div>`;
+  });
+  const both=scenarios.A&&scenarios.B;
+  const cc=$('scnChartCard');
+  const si=$('scnInsight');
+  if(cc)cc.style.display=both?'block':'none';
+  if(si)si.style.display=both?'block':'none';
+  if(both){
+    const A=scenarios.A,B=scenarios.B;
+    const nA=$('scnNameA')?.value||'Scenario A';
+    const nB=$('scnNameB')?.value||'Scenario B';
+    setTimeout(()=>{
+      drawBar('scnChart',['Annual Revenue','Net Profit','Monthly Cash Flow'],[
+        {label:nA,data:[A.totGross,A.totProfit,A.totProfit/12],color:GOLD},
+        {label:nB,data:[B.totGross,B.totProfit,B.totProfit/12],color:BLUE},
+      ]);
+    },60);
+    const winner=A.totProfit>B.totProfit?`Scenario A (${nA})`:B.totProfit>A.totProfit?`Scenario B (${nB})`:'Both scenarios';
+    if(si)si.innerHTML=`💡 <strong>${winner}</strong> generates higher annual net profit by ${fmt(Math.abs(A.totProfit-B.totProfit))}. 
+      ${A.beOcc===B.beOcc?`Both have the same break-even occupancy (${A.beOver?'over 100%':pct(A.beOcc)}).`:A.beOcc<B.beOcc?`Scenario A also has a lower break-even occupancy (${pct(A.beOcc)} vs ${pct(B.beOcc)}), giving more safety margin.`:`Scenario B has a lower break-even occupancy (${pct(B.beOcc)} vs ${pct(A.beOcc)}), giving more safety margin.`}`;
+  }
+}
+
+// ─── SAVE/LOAD ─────────────────────────────────────────────
+const SAVE_IDS=['propName','propType','propState','propBeds','propBaths','propGuests',
+  'purchasePrice','downPct','closingPct','buildingPct','appreciationPct','compRate',
+  'ltrRent','ltrExp','nightlyRate','cleaningFee','avgStay','minStay','occupancy',
+  'platform','platformFee','mortRate','mortTerm','mortType',
+  'e_mortgage','e_taxes','e_insurance','e_hoa','e_license','e_mgmt',
+  'e_electric','e_gas','e_water','e_internet',
+  'e_cleaning','e_supplies','e_linen','e_repairs','e_capex',
+  'e_furniture','e_landscape','e_pool','e_marketing','e_cpa','e_other',
+  'e_buildingPct','e_depYears','e_bonusDepPct','e_shortLifeAssets','e_taxRegion','e_ccaRate'];
+
+function collectInputs(){
+  const d={};
+  SAVE_IDS.forEach(id=>{if($(id))d[id]=$(id).value;});
+  for(let i=0;i<12;i++){
+    d[`sOcc${i}`]=$(`sOcc${i}`)?.value||65;
+    d[`sRate${i}`]=$(`sRate${i}`)?.value||1;
+  }
+  return d;
+}
+
+function applyInputs(d){
+  Object.entries(d).forEach(([id,val])=>{
+    const el=$(id);if(!el)return;
+    el.value=val;
+    if(id.startsWith('sOcc')&&!id.includes('Val')){
+      const i=parseInt(id.replace('sOcc',''));
+      const ve=$(`sOccVal${i}`);if(ve)ve.textContent=val+'%';
+    }
+  });
+}
+
+// ── File-based Save ──────────────────────────────────────────
+function saveToFile(){
+  const propName=($('propName')?.value||'STR-Analysis')
+    .replace(/[^a-zA-Z0-9 _-]/g,'').trim().replace(/\s+/g,'-')||'STR-Analysis';
+  const payload={
+    version:'2',
+    savedAt:new Date().toISOString(),
+    inputs:collectInputs(),
+    scenarios
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`${propName}-STR-Analysis.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  // Also mirror to localStorage as a quick-resume backup
+  localStorage.setItem('strCalcV2',JSON.stringify(collectInputs()));
+  localStorage.setItem('strScenarios',JSON.stringify(scenarios));
+  toast('Saved as file ✓');
+}
+
+// ── File-based Load ──────────────────────────────────────────
+function loadFromFile(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const payload=JSON.parse(e.target.result);
+      // Support both new format {version,inputs,scenarios} and raw legacy format
+      const d=payload.inputs||payload;
+      applyInputs(d);
+      if(payload.scenarios)scenarios=payload.scenarios;
+      calcMortgage();calc();renderScenarios();
+      toast('File loaded ✓');
+    }catch(ex){
+      alert('Could not load file — make sure it is a valid STR Calculator save file (.json).');
+    }
+    event.target.value=''; // reset so same file can be re-selected
+  };
+  reader.readAsText(file);
+}
+
+// ── localStorage restore on first open (backward compat) ────
+function loadData(){
+  let d={},saved=null;
+  try{d=JSON.parse(localStorage.getItem('strCalcV2')||'{}')||{};}catch(e){d={};}
+  try{saved=JSON.parse(localStorage.getItem('strScenarios')||'null');}catch(e){saved=null;}
+  applyInputs(d);
+  if(saved)scenarios=saved;
+}
+
+function resetAll(){
+  if(!confirm('Reset all fields to defaults? This cannot be undone.'))return;
+  clearTimeout(_autoSaveTimer);
+  try{localStorage.removeItem('strCalcV2');localStorage.removeItem('strScenarios');}catch(e){}
+  location.reload();
+}
+
+function toast(msg){
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),2700);
+}
+
+// ─── INIT ──────────────────────────────────────────────────
+buildSeasonGrid();
+calcMortgage();
+loadData();
+renderScenarios();
+calc();
+window.addEventListener('resize',()=>{if($('panel-results').classList.contains('active'))calc();});
+
+// ── Print: ensure charts are drawn before print dialog opens ──────────────────
+// The Export Report button (Tab 4) navigates to Results first which triggers
+// calc() and draws all charts. For Ctrl+P from any tab, we call calc() here
+// so charts are populated. Canvas elements display directly in print (dark card
+// background preserved via print-color-adjust:exact keeps chart colors readable).
+function setTaxRegion(v){
+  v=(v==='US')?'US':'CA';
+  const a=$('e_taxRegion'),b=$('r_taxRegion');
+  if(a)a.value=v;if(b)b.value=v;
+  calc();
+}
+function buildPrintSummary(){
+  const el=$('printSummary');if(!el)return;
+  const v=id=>gs(id), n=(id,d=0)=>gv(id,d);
+  const $$=x=>fmt(x), P=x=>`${Math.round(x*100)/100}%`;
+  const selTxt=id=>{const e=$(id);return e&&e.selectedIndex>=0?e.options[e.selectedIndex].text:'';};
+  const box=(t,rows)=>`<div class="ps-box"><table><thead><tr><th colspan="2">${t}</th></tr></thead><tbody>${rows.filter(r=>r).map(r=>`<tr><td>${r[0]}</td><td style="text-align:right">${r[1]}</td></tr>`).join('')}</tbody></table></div>`;
+  const util=n('e_electric')+n('e_gas')+n('e_water')+n('e_internet');
+  const occs=[],rates=[];for(let i=0;i<12;i++){occs.push(gv('sOcc'+i,65)+'%');rates.push((gv('sRate'+i,1)).toFixed(2)+'×');}
+  const d=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+  el.innerHTML=`<h2>Inputs &amp; Assumptions</h2>
+  <div class="ps-note" style="margin:0">${gs('propName')||'Your Property'} · Report date ${d}. Every figure in this report is calculated from the values below.</div>
+  <div class="ps-grid">
+  ${box('Property',[['Type',selTxt('propType')],['Location',v('propState')||'—'],['Bedrooms / baths',selTxt('propBeds')+' / '+selTxt('propBaths')],['Purchase price',$$(n('purchasePrice'))],['Down payment',P(n('downPct'))],['Closing costs',P(n('closingPct'))],['Building value',P(n('buildingPct'))],['Annual appreciation',P(n('appreciationPct'))]])}
+  ${box('Financing',[['Loan amount',$$(n('mortAmount'))],['Interest rate',P(n('mortRate'))],['Term',selTxt('mortTerm')],['Loan type',selTxt('mortType')],['Monthly payment used',$$(n('e_mortgage'))+' /mo']])}
+  ${box('Revenue & fees',[['Base nightly rate',$$(n('nightlyRate'))],['Cleaning fee (per booking)',$$(n('cleaningFee'))],['Average stay',n('avgStay')+' nights'],['Minimum stay',n('minStay')+' nights'],['Platform',selTxt('platform')],['Platform fee',P(n('platformFee'))],['Occupancy target',P(n('occupancy'))]])}
+  ${box('Monthly costs',[['Property taxes',$$(n('e_taxes'))+' /yr'],['Insurance',$$(n('e_insurance'))+' /yr'],['HOA',$$(n('e_hoa'))+' /mo'],['STR license',$$(n('e_license'))+' /yr'],['Management',P(n('e_mgmt'))+' of revenue'],['Utilities & internet',$$(util)+' /mo'],['Repairs',$$(n('e_repairs'))+' /mo']])}
+  ${box('Per-booking & reserves',[['Cleaning cost per turnover',$$(n('e_cleaning'))],['Supplies per stay',$$(n('e_supplies'))],['Linens & supplies',$$(n('e_linen'))+' /mo'],['CapEx reserve',P(n('e_capex'))+' of revenue'],['Furniture & décor',$$(n('e_furniture'))+' /yr'],['Landscaping / pool',$$(n('e_landscape'))+' / '+$$(n('e_pool'))+' /mo'],['Marketing / accounting / other',$$(n('e_marketing'))+' / '+$$(n('e_cpa'))+' /yr / '+$$(n('e_other'))+' /mo']])}
+  ${box('Tax & comparison',[...(selTxt('e_taxRegion').startsWith('Canada')?[['Tax format','Canada (T776)'],['CCA rate',P(n('e_ccaRate'))]]:[['Tax format','USA (Schedule E)'],['Depreciation period',selTxt('e_depYears')],['Bonus depreciation',P(n('e_bonusDepPct'))],['Short-life assets',$$(n('e_shortLifeAssets'))]]),['Long-term rent',$$(n('ltrRent'))+' /mo'],['Long-term expenses',$$(n('ltrExp'))+' /mo']])}
+  </div>
+  <div class="ps-wide"><table><thead><tr><th style="text-align:left">Seasonality</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}</tr></thead><tbody>
+  <tr><td style="text-align:left">Occupancy</td>${occs.map(x=>`<td>${x}</td>`).join('')}</tr>
+  <tr><td style="text-align:left">Rate multiplier</td>${rates.map(x=>`<td>${x}</td>`).join('')}</tr></tbody></table></div>
+  <div class="ps-note">For informational and planning purposes only — not financial, tax or investment advice. Tax line references are CRA Form T776 (Canada) or US Schedule E, as selected; confirm everything with a qualified professional.</div>`;
+}
+(function(){
+  window.addEventListener('beforeprint', function(){
+    try{
+      document.body.dataset.scn=(scenarios&&scenarios.A&&scenarios.B)?'1':'0';
+      setChartTheme(true); calc(); buildPrintSummary(); drawAllCharts();
+    }catch(e){}
+  });
+  window.addEventListener('afterprint', function(){
+    try{ setChartTheme(false); drawAllCharts(); }catch(e){}
+  });
+})();
+</script>
+<script>
+// ─── WEB APP: offline support, update notice, Home Screen tip ───
+// Only active when opened from the web link; the downloaded file works as before.
+// APP_VERSION is set once, at the top of the main script.
+const UPDATE_CHECK_URL = 'https://thedadsidehustleco.github.io/STR-Calculator/';
+const IS_WEB = /^https?:$/.test(location.protocol);
+function _ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
+try{document.getElementById('app-version-label').textContent=APP_VERSION;}catch(e){}
+try{if(IS_WEB)document.getElementById('tdsh-link-note').style.display='none';}catch(e){}
+if(IS_WEB&&'serviceWorker' in navigator){
+  window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});
+}
+if(IS_WEB&&navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(()=>{});}
+function checkForUpdate(){
+  if(!IS_WEB||!navigator.onLine)return;
+  const snooze=+(_ls('str_update_snooze')||0);
+  if(snooze&&Date.now()-snooze<3*24*60*60*1000)return;
+  fetch(UPDATE_CHECK_URL+'?_uc='+Date.now(),{cache:'no-store'})
+    .then(r=>r.text())
+    .then(html=>{const m=html.match(/const APP_VERSION = '([^']+)'/);
+      if(m&&m[1]!==APP_VERSION)document.getElementById('tdsh-update').classList.add('active');})
+    .catch(()=>{});
+}
+function dismissUpdate(){_ls('str_update_snooze',String(Date.now()));document.getElementById('tdsh-update').classList.remove('active');}
+function doUpdate(){
+  document.getElementById('tdsh-update').classList.remove('active');
+  const reload=()=>window.location.reload();
+  if(!('caches' in window)){reload();return;}
+  caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k))))
+    .then(()=>('serviceWorker' in navigator)?navigator.serviceWorker.getRegistrations().then(regs=>Promise.all(regs.map(r=>r.unregister()))):null)
+    .then(reload,reload);
+}
+setTimeout(checkForUpdate,6000);
+function showHomeScreenTip(){
+  const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const standalone=window.navigator.standalone===true||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches);
+  if(!IS_WEB||!isIOS||standalone||_ls('str_hs_tip_off'))return;
+  document.getElementById('tdsh-hs-tip').classList.add('visible');
+}
+function closeHomeScreenTip(){_ls('str_hs_tip_off','1');document.getElementById('tdsh-hs-tip').classList.remove('visible');}
+setTimeout(showHomeScreenTip,800);
+</script>
+
+<!-- Update notice (web app only) -->
+<div id="tdsh-update" role="dialog" aria-modal="true" aria-label="Update available">
+  <div class="tu-card">
+    <div style="font-size:2.2rem;line-height:1;">🏠</div>
+    <h3>The calculator has been updated</h3>
+    <p>A newer version is ready, with improvements and fixes.</p>
+    <div class="tu-keep">✅ Your saved numbers stay on this device and are kept.</div>
+    <div class="tu-btns">
+      <button class="tu-primary" onclick="doUpdate()">Update now</button>
+      <button class="tu-later" onclick="dismissUpdate()">Later (remind me in 3 days)</button>
+    </div>
+  </div>
+</div>
+
+<!-- iPhone/iPad tip (web app only, not shown once added to the Home Screen) -->
+<div id="tdsh-hs-tip" role="note">
+  <strong>📲 Tip: add the calculator to your Home Screen</strong>
+  <p>Tap the Share button <b>⬆︎</b>, then <b>Add to Home Screen</b>. It opens like an app, works offline, and keeps your numbers on this device.</p>
+  <button onclick="closeHomeScreenTip()" aria-label="Close tip">✕</button>
+</div>
+</body>
+</html>
