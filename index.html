@@ -1220,7 +1220,7 @@ input[type=range]:focus{outline:2px solid var(--gold);outline-offset:2px;}
 
 <script>
 // ─── CONSTANTS ─────────────────────────────────────────────
-const APP_VERSION = '2.1.0';
+const APP_VERSION = '2.1.1';
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 // Leap-year aware days-in-month (5B fix)
 function daysInMonth(m){return new Date(new Date().getFullYear(),m+1,0).getDate();}
@@ -1319,22 +1319,31 @@ function setPlatformFee(){
 }
 
 // ─── CANVAS CHARTS ─────────────────────────────────────────
+// Sharp charts on high-resolution screens: draw in CSS pixels on a canvas scaled by devicePixelRatio
+function hdCanvas(c,w,h){
+  const dpr=Math.min(3,Math.max(1,window.devicePixelRatio||1));
+  c.style.height=h+'px';
+  c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);
+  const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  return ctx;
+}
+function cvH(c,def){if(!c.dataset.h)c.dataset.h=c.getAttribute('height')||def;return parseInt(c.dataset.h)||def;}
 function clearCanvas(id){
   const c=$(id);if(!c)return null;
-  const ctx=c.getContext('2d');
-  c.width=c.offsetWidth||c.parentElement.offsetWidth||600;
-  ctx.clearRect(0,0,c.width,c.height);
+  const CW=c.offsetWidth||c.parentElement.offsetWidth||600,h=cvH(c,220);
+  const ctx=hdCanvas(c,CW,h);
+  ctx.clearRect(0,0,CW,h);
   return ctx;
 }
 
 function drawBar(id,labels,datasets,opts={}){
   const c=$(id);if(!c)return;
-  c.width=c.offsetWidth||c.parentElement.clientWidth||600;
-  const h=c.height=parseInt(c.getAttribute('height')||220);
-  const ctx=c.getContext('2d');
-  ctx.clearRect(0,0,c.width,h);
+  const CW=c.offsetWidth||c.parentElement.clientWidth||600;
+  const h=cvH(c,220);
+  const ctx=hdCanvas(c,CW,h);
+  ctx.clearRect(0,0,CW,h);
   const pad={l:55,r:16,t:10,b:36};
-  const W=c.width-pad.l-pad.r, H=h-pad.t-pad.b;
+  const W=CW-pad.l-pad.r, H=h-pad.t-pad.b;
   const n=labels.length, ds=datasets.length, bw=Math.floor(W/n/(ds+1)), gap=Math.floor(bw*.4);
   const allVals=datasets.flatMap(d=>d.data);
   const maxV=Math.max(...allVals,0)*1.12, minV=Math.min(...allVals,0);
@@ -1394,11 +1403,11 @@ function drawBar(id,labels,datasets,opts={}){
 
 function drawDonut(id,labels,data,colors){
   const c=$(id);if(!c)return;
-  c.width=c.parentElement.offsetWidth||400;
-  const h=c.height=parseInt(c.getAttribute('height')||230);
-  const ctx=c.getContext('2d');
-  ctx.clearRect(0,0,c.width,h);
-  const cx=c.width*0.38, cy=h/2+8, r=Math.min(cx,cy)-20, ir=r*.62;
+  const CW=c.parentElement.offsetWidth||400;
+  const h=cvH(c,230);
+  const ctx=hdCanvas(c,CW,h);
+  ctx.clearRect(0,0,CW,h);
+  const cx=CW*0.38, cy=h/2+8, r=Math.min(cx,cy)-20, ir=r*.62;
   const total=data.reduce((a,b)=>a+b,0)||1;
   let angle=-Math.PI/2;
   data.forEach((v,i)=>{
@@ -1419,7 +1428,7 @@ function drawDonut(id,labels,data,colors){
   ctx.font='13px Inter,sans-serif';ctx.fillStyle=CTXT2;
   ctx.fillText(bigPct+'%',cx,cy+14);
   // legend
-  const lx=c.width*0.72, topY=20, lh=20;
+  const lx=CW*0.72, topY=20, lh=20;
   ctx.textAlign='left';
   labels.forEach((l,i)=>{
     if(i>9)return;
@@ -1433,12 +1442,12 @@ function drawDonut(id,labels,data,colors){
 
 function drawLine(id,labels,datasets,opts={}){
   const c=$(id);if(!c)return;
-  const _r=c.getBoundingClientRect();c.width=Math.round(_r.width)||c.parentElement.offsetWidth||600;
-  const h=c.height=parseInt(c.getAttribute('height')||240);
-  const ctx=c.getContext('2d');
-  ctx.clearRect(0,0,c.width,h);
+  const _r=c.getBoundingClientRect();const CW=Math.round(_r.width)||c.parentElement.offsetWidth||600;
+  const h=cvH(c,240);
+  const ctx=hdCanvas(c,CW,h);
+  ctx.clearRect(0,0,CW,h);
   const pad={l:62,r:35,t:14,b:52};
-  const W=c.width-pad.l-pad.r;
+  const W=CW-pad.l-pad.r;
   const H=h-pad.t-pad.b;
   const allVals=datasets.flatMap(d=>d.data);
   const _hi0=Math.max(...allVals,0),_lo0=Math.min(...allVals,0);
@@ -1782,6 +1791,7 @@ function calc(){
   // Season dots
   for(let i=0;i<12;i++){
     const o=gv(`sOcc${i}`,Math.round(baseOcc*100));
+    const lv=$(`sOccVal${i}`);if(lv)lv.textContent=o+'%';
     const d=$(`sDot${i}`);
     if(d)d.style.background=o>75?'var(--gold)':o>50?'var(--green)':'var(--red)';
   }
@@ -1862,6 +1872,7 @@ function showTab(t){
   $('panel-'+t)?.classList.add('active');
   $('tb-'+t)?.classList.add('active');
   if(t==='results')setTimeout(calc,80);
+  if(t==='scenario')setTimeout(renderScenarios,80); // chart needs the visible width
 }
 
 // ─── SCENARIO SAVE/COMPARE ─────────────────────────────────
